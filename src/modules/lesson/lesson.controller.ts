@@ -780,12 +780,12 @@ export class LessonController {
       if (body.status == AbsentRequestStatus.PROCESSING) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,
-          this.i18n.translate('requestLeave.processed'),
+          this.i18n.translate('lesson.absentRequest.processed'),
           [
             {
               key: 'status',
               errorCode: HttpStatus.ITEM_INVALID,
-              message: this.i18n.translate('requestLeave.processed'),
+              message: this.i18n.translate('lesson.absentRequest.processed'),
             },
           ],
         );

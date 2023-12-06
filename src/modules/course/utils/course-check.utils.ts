@@ -101,12 +101,12 @@ export class CourseCheckUtils {
     if (existedCourses.length !== ids.length) {
       const error = new ErrorResponse(
         HttpStatus.BAD_REQUEST,
-        this.i18n.translate('course-form-setting.find.notFound'),
+        this.i18n.translate('setting.notFound'),
         [
           {
             key: 'courseFormIds',
             errorCode: HttpStatus.ITEM_NOT_FOUND,
-            message: this.i18n.translate('course-form-setting.find.notFound'),
+            message: this.i18n.translate('setting.notFound'),
             data: difference(ids, existedIds),
           },
         ],

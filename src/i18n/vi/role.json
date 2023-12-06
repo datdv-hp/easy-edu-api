@@ -1,0 +1,6 @@
+{
+  "notFound": "Vai trò không tồn tại trong hệ thống",
+  "exist": "Vai trò đã tồn tại trong hệ thống",
+  "cannotDeleteRoleDefault": "Không thể xóa vai trò mặc định trong hệ thống",
+  "cannotDeleteWhenExistUserHaveThisRole": "Vai trò đã được gán cho người dùng"
+}

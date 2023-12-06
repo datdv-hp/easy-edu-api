@@ -1,0 +1,5 @@
+{
+  "notFound": "Không tìm thấy khóa học",
+  "notAllowDeleteCourse": "Khóa học vẫn còn học sinh",
+  "notAllowDeleteByClass": "Khóa học vẫn còn lớp học"
+}

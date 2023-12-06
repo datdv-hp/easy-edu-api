@@ -130,7 +130,7 @@ export class TimekeepingController {
           {
             key: 'timekeepingTime',
             errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.timeInvalid'),
+            message: i18n.translate('timekeeping.lessonCompleted'),
           },
         ]);
       }
@@ -231,7 +231,7 @@ export class TimekeepingController {
           {
             key: 'timekeepingTime',
             errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.timeInvalid'),
+            message: i18n.translate('timekeeping.lessonCompleted'),
           },
         ]);
       }

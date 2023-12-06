@@ -99,7 +99,7 @@ export class UserController {
             {
               errorCode: HttpStatus.ITEM_INVALID,
               key: 'password',
-              message: i18n.t('user.not_temporary_password'),
+              message: i18n.t('user.user.notTemporaryPassword'),
             },
           ],
         );
@@ -112,7 +112,7 @@ export class UserController {
       if (!updatedUser) {
         return new ErrorResponse(
           HttpStatus.NOT_FOUND,
-          i18n.t('user.not_found'),
+          i18n.t('user.user.notFound'),
         );
       }
       return new SuccessResponse({ success: true });
@@ -147,7 +147,7 @@ export class UserController {
             {
               errorCode: HttpStatus.ITEM_INVALID,
               key: 'password',
-              message: i18n.t('user.wrong_password'),
+              message: i18n.t('user.user.wrongPassword'),
             },
           ],
         );

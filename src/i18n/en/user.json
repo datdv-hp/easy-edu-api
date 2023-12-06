@@ -1,0 +1,29 @@
+{
+  "manager": {
+    "notFound": "Không tìm thấy quản lí",
+    "teacherIsTeaching": "Quản lí kiêm giảng viên đang có lịch dạy",
+    "notDeleteManager": "Không thể xóa quản lí",
+    "teacherHaveLesson": "Quản lí kiêm giảng viên đang có buổi học",
+    "error": {
+      "cannotUpdateYourself": "Không thể cập nhật chính mình"
+    }
+  },
+  "teacher": {
+    "notFound": "Không tìm thấy giáo viên",
+    "teacherHaveLesson": "Giảng viên đang có buổi học",
+    "notDeleteTeacher": "Không thể xóa giảng viên"
+  },
+  "student": {
+    "notFound": "Không tìm thấy học sinh",
+    "invalidStudent": "Dữ liệu học sinh không hợp lệ",
+    "cannotDeleteStudentHaveLesson": "Không thể xóa học sinh do học sinh có buổi học"
+  },
+  "user": {
+    "notFound": "Không tìm thấy dữ liệu người dùng",
+    "userIsActived": "Tài khoản người dùng đã được kích hoạt",
+    "verifyCodeIsWrong": "Mã xác minh không đúng",
+    "verifyCodeIsExpired": "Mã xác minh hết hạn",
+    "wrongPassword": "Mật khẩu không đúng",
+    "notTemporaryPassword": "Mật khẩu không phải là mật khẩu tạm thời"
+  }
+}

@@ -441,12 +441,12 @@ export class LessonCheckUtils extends BaseService {
       if (existedAbsentRequest) {
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
-          this.i18n.t('lesson.requestLeave.existed'),
+          this.i18n.t('lesson.absentRequest.existed'),
           [
             {
               key: errorKey,
               errorCode: HttpStatus.ITEM_NOT_FOUND,
-              message: this.i18n.translate('lesson.requestLeave.existed'),
+              message: this.i18n.translate('lesson.absentRequest.existed'),
             },
           ],
         );

@@ -1,0 +1,5 @@
+{
+  "notFound": "Lớp học không tồn tại",
+  "notAllowDeleteByLesson": "Lớp học vẫn còn buổi học",
+  "inValidDate": "Dữ liệu ngày không hợp lệ"
+}
