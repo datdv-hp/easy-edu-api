@@ -1,7 +1,6 @@
 import { Gender } from '@/common/constants';
 import { IFilterBase } from '@/common/interfaces';
 import { StudentDegree } from '@/database/constants';
-import { Types } from 'mongoose';
 
 export type IUserFormDataBase = {
   name: string;
@@ -29,15 +28,6 @@ export interface ICreateUserFormData {
 export type IUpdateProfileFormData = Partial<
   Omit<ICreateUserFormData, 'email' | 'phone'>
 >;
-
-export type ICreateUser = (
-  | IStudentCreateFormData
-  | ITeacherCreateFormData
-  | IManagerCreateFormData
-) & {
-  updatedBy: string;
-  createdBy: string;
-};
 
 // TEACHER
 export interface ITeacherFilter extends IFilterBase {

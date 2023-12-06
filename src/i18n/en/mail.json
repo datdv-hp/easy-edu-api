@@ -1,6 +1,6 @@
 {
     "confirmationEmail": {
-        "subject": "Verify account",
+        "subject": "Verify your EasyEdu account",
         "body": {
             "greeting": "Hi {name},",
             "intro": "Your email is used for register the account of EasyEdu.",
@@ -11,10 +11,10 @@
         }
     },
     "activeAccountSuccess": {
-        "subject": "Account activated successfully",
+        "subject": "EasyEdu account information",
         "body": {
             "greeting": "Hi {name},",
-            "intro": "Your account has been activated.",
+            "intro": "Your EasyEdu account has been activated.",
             "email": "Your login email: {email}",
             "password": "Your login password: {password}",
             "action": {

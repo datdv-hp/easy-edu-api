@@ -149,6 +149,43 @@ export class UserCheckUtils extends BaseService {
     return { valid: true, data: userExisted };
   }
 
+  async notActivatedUserById(
+    id: string,
+    select: ProjectionType<User> = { _id: 1 },
+  ) {
+    const userExisted = await this.repo.findById(id, select).lean().exec();
+    if (!userExisted) {
+      const error = new ErrorResponse(
+        HttpStatus.BAD_REQUEST,
+        this.i18n.t('user.not_found'),
+        [
+          {
+            errorCode: HttpStatus.ITEM_NOT_FOUND,
+            key: 'email',
+            message: this.i18n.t('user.not_found'),
+          },
+        ],
+      );
+      return { valid: false, error };
+    }
+
+    if (userExisted.status === UserStatus.ACTIVE) {
+      const error = new ErrorResponse(
+        HttpStatus.BAD_REQUEST,
+        this.i18n.t('user.user.userIsActived'),
+        [
+          {
+            key: 'status',
+            message: this.i18n.t('user.user.userIsActived'),
+            errorCode: HttpStatus.ITEM_INVALID,
+          },
+        ],
+      );
+      return { valid: false, error };
+    }
+    return { valid: true, data: userExisted };
+  }
+
   async verifyCodeExisted(
     userId: string | Types.ObjectId,
     code: string,

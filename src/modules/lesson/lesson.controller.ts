@@ -332,7 +332,7 @@ export class LessonController {
     @Param('id', new JoiValidationPipe(ObjectIdSchema)) id: string,
   ) {
     try {
-      const lesson = await this.service.findLessonDetail(id);
+      const lesson = await this.service.FindLessonMoreDetail(id);
       if (!lesson) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,
@@ -356,7 +356,7 @@ export class LessonController {
     @Param('id', new JoiValidationPipe(ObjectIdSchema)) id: string,
   ) {
     try {
-      const lesson = await this.service.findLessonDetailForSchedule(id);
+      const lesson = await this.service.FindLessonMoreDetail(id);
       if (!lesson) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,

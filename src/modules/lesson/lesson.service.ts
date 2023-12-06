@@ -481,7 +481,7 @@ export class LessonService extends BaseService {
     }
   }
 
-  async findLessonDetailForSchedule(id: string) {
+  async FindLessonMoreDetail(id: string) {
     try {
       const now = dayjs();
       const date = now.format(DateFormat.YYYY_MM_DD_HYPHEN);
@@ -658,7 +658,10 @@ export class LessonService extends BaseService {
           .lean()
           .exec(),
         this.timekeepingRepo
-          .find({ lessonId: lesson._id, userId: { $in: userIds } })
+          .find(
+            { lessonId: lesson._id, userId: { $in: userIds } },
+            { lessonId: 1, userId: 1, isAttended: 1 },
+          )
           .lean()
           .exec(),
       ]);

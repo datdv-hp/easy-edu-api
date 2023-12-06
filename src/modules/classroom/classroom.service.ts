@@ -14,13 +14,10 @@ import { CodePrefix, DELETE_COND } from '@/database/constants';
 import { Classroom, Lesson, Syllabus } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
-  CourseRepository,
   LectureRepository,
   LessonRepository,
-  SubjectRepository,
   SyllabusRepository,
   TimekeepingRepository,
-  UserCourseRepository,
   UserRepository,
 } from '@/database/repositories';
 import dayjs from '@/plugins/dayjs';

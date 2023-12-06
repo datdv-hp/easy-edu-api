@@ -1,5 +1,5 @@
-import { ClientSession, CreateOptions } from 'mongoose';
 import {
+  CreateOptions,
   Document,
   FilterQuery,
   ProjectionType,

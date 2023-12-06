@@ -5,7 +5,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from '@/common/helpers/response.helper';
-import { IUserCredential } from '@/common/interfaces';
+import { IContext, IUserCredential } from '@/common/interfaces';
 import { JoiValidationPipe } from '@/common/pipes/joi.validation.pipe';
 import { TrimBodyPipe } from '@/common/pipes/trim.body.pipe';
 import {
@@ -13,6 +13,7 @@ import {
   Controller,
   Get,
   InternalServerErrorException,
+  Param,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -30,6 +31,7 @@ import {
   updateProfileBodySchema,
   updateTemporaryPasswordBodySchema,
 } from '../validators/user.validators';
+import { ObjectIdSchema } from '@/common/validations';
 
 @Controller('user')
 export class UserController {
@@ -197,6 +199,27 @@ export class UserController {
         checkUserVerify.data._id,
       );
 
+      return new SuccessResponse({ success });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Post(':id/verify-email')
+  async resendEmail(
+    @Param('id', new JoiValidationPipe(ObjectIdSchema)) id: string,
+    @EasyContext() context?: IContext,
+  ) {
+    try {
+      const checkNotActiveUser = await this.checkUtils.notActivatedUserById(
+        id,
+        { email: 1, name: 1, status: 1 },
+      );
+      if (!checkNotActiveUser.valid) return checkNotActiveUser.error;
+      const success = await this.service.resendVerifyEmail(
+        checkNotActiveUser.data,
+        context.user.id,
+      );
       return new SuccessResponse({ success });
     } catch (error) {
       throw new InternalServerErrorException(error);

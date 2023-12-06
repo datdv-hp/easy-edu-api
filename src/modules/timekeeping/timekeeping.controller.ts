@@ -104,7 +104,15 @@ export class TimekeepingController {
           break;
         }
       }
-
+      if (isLessonUpcoming) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
+          {
+            key: 'lessonUpcoming',
+            errorCode: HttpStatus.ITEM_INVALID,
+            message: i18n.translate('timekeeping.lessonUpcoming'),
+          },
+        ]);
+      }
       // check if all lessons completed
       let isLessonCompleted = false;
       for (let index = 0; index < lessons.length; index++) {
@@ -117,15 +125,6 @@ export class TimekeepingController {
         }
       }
 
-      if (isLessonUpcoming) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
-          {
-            key: 'lessonUpcoming',
-            errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.lessonUpcoming'),
-          },
-        ]);
-      }
       if (isLessonCompleted) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
           {

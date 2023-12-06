@@ -1,8 +1,8 @@
 import { MongoCollection } from '@/common/constants';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MongoBaseSchema } from './base.schema';
-import { HydratedDocument, Types, Schema as _Schema } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import MongooseDelete from 'mongoose-delete';
+import { MongoBaseSchema } from './base.schema';
 
 export type SyllabusDocument = HydratedDocument<Syllabus>;
 

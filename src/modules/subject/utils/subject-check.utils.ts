@@ -1,6 +1,6 @@
 import { HttpStatus } from '@/common/constants';
 import { ErrorResponse } from '@/common/helpers/response.helper';
-import { Subject, SubjectDocument } from '@/database/mongo-schemas';
+import { SubjectDocument } from '@/database/mongo-schemas';
 import { SubjectRepository } from '@/database/repositories';
 import { Injectable } from '@nestjs/common';
 import { FilterQuery, ProjectionType, Types } from 'mongoose';

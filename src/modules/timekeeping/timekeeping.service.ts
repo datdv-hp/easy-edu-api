@@ -116,7 +116,7 @@ export class TimekeepingService extends BaseService {
         teacher.countCheckIn = filter(timekeepingInfos, (timekeeping) => {
           return (
             timekeeping.isAttended &&
-            timekeeping.userId === teacher._id.toString()
+            timekeeping.userId.toString() === teacher._id.toString()
           );
         }).length;
         delete teacher.lessons;

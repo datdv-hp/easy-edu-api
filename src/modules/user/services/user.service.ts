@@ -6,7 +6,7 @@ import {
   sto,
 } from '@/common/helpers/common.functions.helper';
 import { BaseService } from '@/common/services/base.service';
-import { DELETE_COND } from '@/database/constants';
+import { DELETE_COND, UserVerifyType } from '@/database/constants';
 import { User } from '@/database/mongo-schemas';
 import { UserRepository, UserVerifyRepository } from '@/database/repositories';
 import { MailService } from '@/modules/mail/mail.service';
@@ -15,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { FilterQuery, PipelineStage, Types } from 'mongoose';
 import { compactUserFeatures } from '../user.helpers';
 import { IUpdateProfileFormData } from '../user.interfaces';
+import { randomUUID } from 'crypto';
 @Injectable()
 export class UserService extends BaseService {
   constructor(
@@ -177,10 +178,11 @@ export class UserService extends BaseService {
         .deleteOne({ _id: userVerifyId })
         .session(session);
       const password = randomPassword();
-      await this.model
+      await this.repo
         .findByIdAndUpdate(user.id, {
           status: UserStatus.ACTIVE,
           password: hashPassword(password),
+          isTemporary: true,
         })
         .session(session);
       const feDomain = this.configService.get(ConfigKey.FRONTEND_DOMAIN);
@@ -200,6 +202,35 @@ export class UserService extends BaseService {
       throw error;
     } finally {
       await session.endSession();
+    }
+  }
+  async resendVerifyEmail(user: User, createdBy: string) {
+    try {
+      let userVerify = await this.userVerifyRepo.findOne({
+        userId: user._id,
+        type: UserVerifyType.ACTIVE_ACCOUNT,
+      });
+      const newCode = randomUUID();
+
+      if (userVerify) {
+        userVerify.code = newCode;
+        await userVerify.save();
+      } else {
+        userVerify = await this.userVerifyRepo.create({
+          userId: user._id,
+          code: newCode,
+          type: UserVerifyType.ACTIVE_ACCOUNT,
+          createdBy: sto(createdBy),
+        });
+      }
+      await this.mailService.sendVerifyEmail({
+        email: user.email,
+        name: user.name,
+        code: newCode,
+      });
+      return true;
+    } catch (error) {
+      throw error;
     }
   }
 }

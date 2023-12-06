@@ -1,14 +1,9 @@
 import { MongoCollection } from '@/common/constants';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MongoBaseSchema } from './base.schema';
-import {
-  HydratedDocument,
-  Schema as _Schema,
-  Types,
-  SchemaTypes,
-} from 'mongoose';
-import { Syllabus } from './syllabus.schema';
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 import MongooseDelete from 'mongoose-delete';
+import { MongoBaseSchema } from './base.schema';
+import { Syllabus } from './syllabus.schema';
 
 export type SyllabusHistoryDocument = HydratedDocument<SyllabusHistory>;
 

@@ -11,7 +11,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { difference } from 'lodash';
 import { ProjectionType } from 'mongoose';
-import dayjs from '@/plugins/dayjs';
 
 @Injectable()
 export class TimekeepingCheckUtil extends BaseService {
@@ -98,8 +97,11 @@ export class TimekeepingCheckUtil extends BaseService {
       const lessonsExistIds = lessonsExist.map((lesson) =>
         lesson._id.toString(),
       );
+      console.log('lessonsExist', lessonsExist);
+      console.log('lessonsExistIds', lessonsExistIds);
       const lessonsNotExisted = difference(ids, lessonsExistIds);
-      if (lessonsExist.length !== ids.length) {
+      if (lessonsNotExisted.length) {
+        console.log('lessonsNotExisted', lessonsNotExisted);
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
           this.i18n.t('errors.400'),
