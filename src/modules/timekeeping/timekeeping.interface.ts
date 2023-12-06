@@ -4,7 +4,7 @@ import { TimekeepingStatus } from './timekeeping.constant';
 export interface ITimekeepingCreateFormData {
   userId: string;
   lessonId: string;
-  isAttended: string;
+  isAttended: boolean;
 }
 
 export interface ITimekeepingUpdateFormData {

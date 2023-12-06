@@ -35,10 +35,6 @@ class TeacherDetail {
   @Prop({ type: String, trim: true, default: null })
   degree?: string;
 
-  @Prop({ type: String, trim: true, default: null })
-  // đơn vị công tác
-  workUnit?: string;
-
   @Prop({ type: String, default: null })
   // ngày ký hợp đồng
   signedContractDate?: string;

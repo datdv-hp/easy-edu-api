@@ -50,6 +50,39 @@ export class TimekeepingCheckUtil extends BaseService {
     }
   }
 
+  async TimekeepingNotExistByUserIdAndLessonId(params: {
+    userId: string;
+    lessonId: string;
+  }) {
+    try {
+      const timekeeping = await this.timekeepingRepo.findOne(
+        { userId: params.userId, lessonId: params.lessonId },
+        { _id: 1 },
+      );
+      if (timekeeping) {
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.translate('timekeeping.somethingWrong'),
+          [
+            {
+              key: 'timekeeping',
+              errorCode: HttpStatus.ITEM_NOT_FOUND,
+              message: this.i18n.translate('timekeeping.exist'),
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true };
+    } catch (error) {
+      this.logger.error(
+        'Error in TimekeepingNotExistByUserIdAndLessonId checkUtil',
+        error,
+      );
+      throw error;
+    }
+  }
+
   async UsersExistByIds(
     ids: string[],
     select: ProjectionType<User> = { _id: 1 },
@@ -97,11 +130,8 @@ export class TimekeepingCheckUtil extends BaseService {
       const lessonsExistIds = lessonsExist.map((lesson) =>
         lesson._id.toString(),
       );
-      console.log('lessonsExist', lessonsExist);
-      console.log('lessonsExistIds', lessonsExistIds);
       const lessonsNotExisted = difference(ids, lessonsExistIds);
       if (lessonsNotExisted.length) {
-        console.log('lessonsNotExisted', lessonsNotExisted);
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
           this.i18n.t('errors.400'),

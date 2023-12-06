@@ -330,14 +330,18 @@ export class CourseService extends BaseService {
   async findTeacherByCourseId(courseId: string) {
     try {
       const lessons: Lesson[] = await this.lessonRepo
-        .find({ courseId }, ['teacherId'])
-        .distinct('teacher')
+        .find({ courseId }, { teacherId: 1 })
         .lean()
         .exec();
-      const teacherIds = lessons.map((item) => item.teacherId);
-      const SELECT = ['code', 'name', 'email', 'phone', 'teacherDetail.degree'];
+      const teacherIds = uniq(lessons.map((item) => item.teacherId.toString()));
       const teachers = await this.userRepo
-        .findByIds(teacherIds, SELECT)
+        .findByIds(teacherIds, {
+          code: 1,
+          name: 1,
+          email: 1,
+          phone: 1,
+          'teacherDetail.degree': 1,
+        })
         .lean()
         .exec();
       return teachers;

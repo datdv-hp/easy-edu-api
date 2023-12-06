@@ -2,7 +2,7 @@ import { RoleType } from '../../../common/constants';
 
 export const features = {
   user: {
-    update: true,
+    // update: true,
     changePassword: true,
   },
   role: {
@@ -83,7 +83,7 @@ export const features = {
     update: true,
     delete: true,
     updateDocument: true,
-    downloadVideo: true,
+    // downloadVideo: true,
   },
   timekeeping: {
     view: true,
@@ -99,18 +99,6 @@ export const features = {
     download: true,
   },
   courseFormSetting: {
-    view: true,
-    create: true,
-    update: true,
-    delete: true,
-  },
-  evaluationClassifiedSetting: {
-    view: true,
-    create: true,
-    update: true,
-    delete: true,
-  },
-  evaluationCriteriaSetting: {
     view: true,
     create: true,
     update: true,
@@ -170,7 +158,7 @@ export const managerRole = {
     update: true,
     delete: true,
     updateDocument: true,
-    downloadVideo: true,
+    // downloadVideo: true,
   },
   schedule: {
     view: true,
@@ -195,7 +183,7 @@ export const managerRole = {
 
 export const teacherRole = {
   user: {
-    update: true,
+    // update: true,
     changePassword: true,
   },
   schedule: {
@@ -233,7 +221,7 @@ export const teacherRole = {
 
 export const studentRole = {
   user: {
-    update: true,
+    // update: true,
     changePassword: true,
   },
   schedule: {
