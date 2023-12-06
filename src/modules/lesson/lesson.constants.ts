@@ -1,0 +1,1 @@
+export const LESSON_RANDOM_STRING_LENGTH = 10;

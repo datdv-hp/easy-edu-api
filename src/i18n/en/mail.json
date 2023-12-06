@@ -1,0 +1,28 @@
+{
+    "confirmationEmail": {
+        "subject": "Verify account",
+        "body": {
+            "greeting": "Hi {name},",
+            "intro": "Your email is used for register the account of EasyEdu.",
+            "action": {
+                "instructions": "Please click the link below to activate your account.",
+                "button": "Activate your account"
+            }
+        }
+    },
+    "activeAccountSuccess": {
+        "subject": "Account activated successfully",
+        "body": {
+            "greeting": "Hi {name},",
+            "intro": "Your account has been activated.",
+            "email": "Your login email: {email}",
+            "password": "Your login password: {password}",
+            "action": {
+                "button": "Click here to go to login page"
+            }
+        }
+    },
+    "lessonAbsentProcessed": {
+        "subject": "The absent result"
+    }
+}

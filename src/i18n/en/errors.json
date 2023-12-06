@@ -1,0 +1,16 @@
+{
+  "register": {
+    "existedEmail": "Email existed",
+    "existedPhone": "Phone number existed"
+  },
+  "bad_request": "Bad request",
+  "400": "Bad request",
+  "not_found": "Resource not found",
+  "404": "Resource not found",
+  "401": "Unauthorized",
+  "unauthorized": "Unauthorized",
+  "403": "Forbidden",
+  "forbidden": "Forbidden",
+  "500": "Internal server error",
+  "internal_server_error": "Internal server error"
+}

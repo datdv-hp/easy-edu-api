@@ -1,0 +1,31 @@
+{
+  "confirmationEmail": {
+    "subject": "Xác minh tài khoản",
+    "body": {
+      "greeting": "Xin chào {name},",
+      "intro": "Email của bạn đã được sử dụng để đăng ký tài khoản EasyEdu.",
+      "action": {
+        "instructions": "Vui lòng nhấn vào đường dẫn bên dưới để kích hoạt tài khoản của bạn.",
+        "button": "Kích hoạt tài khoản"
+      }
+    }
+  },
+  "activeAccountSuccess": {
+    "subject": "Kích hoạt tài khoản thành công",
+    "body": {
+      "greeting": "Xin chào {name},",
+      "intro": "Tài khoản của bạn đã được kích hoạt thành công.",
+      "email": "Tài khoản đăng nhập: {email}",
+      "password": "Mật khẩu: {password}",
+      "action": {
+        "button": "Di chuyển đến trang đăng nhập"
+      }
+    }
+  },
+  "lessonAbsentProcessed": {
+    "subject": "Kết quả xử lý đơn xin nghỉ",
+    "approve": "Đơn xin nghỉ của bạn vào buổi học {{lessonName}} lúc {{startTime}} đến {{endTime}} ngày {{date}} đã được giảng viên chấp nhận",
+    "reject": "Đơn xin nghỉ của bạn vào buổi học {{lessonName}} lúc {{startTime}} đến {{endTime}} ngày {{date}} không được giảng viên chấp nhận"
+  },
+  "notYouRequest": "Nếu bạn không phải là người yêu cầu, vui lòng bỏ qua email này."
+}

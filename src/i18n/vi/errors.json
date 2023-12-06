@@ -1,0 +1,16 @@
+{
+  "register": {
+    "existedEmail": "Email đã tồn tại",
+    "existedPhone": "Số điện thoại đã tồn tại"
+  },
+  "bad_request": "Yêu cầu không hợp lệ",
+  "400": "Yêu cầu không hợp lệ",
+  "not_found": "Không tìm thấy tài nguyên",
+  "404": "Không tìm thấy tài nguyên",
+  "401": "Xác thực không thành công",
+  "unauthorized": "Xác thực không thành công",
+  "403": "Không có quyền truy cập",
+  "forbidden": "Không có quyền truy cập",
+  "500": "Lỗi hệ thống",
+  "internal_server_error": "Lỗi hệ thống"
+}
