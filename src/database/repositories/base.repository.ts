@@ -66,7 +66,7 @@ export class BaseRepository<T extends Omit<Document, 'delete'>> {
     return this.model.exists({ _id: id });
   }
 
-  create(entity: Partial<T>, options?: SaveOptions) {
+  create(entity: Partial<T | any>, options?: SaveOptions) {
     const newEntity = new this.model(entity);
     return newEntity.save(options);
   }

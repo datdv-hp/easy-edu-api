@@ -5,6 +5,8 @@ export * from './general-setting.repository';
 export * from './lecture.repository';
 export * from './lesson-absent.repository';
 export * from './lesson.repository';
+export * from './promotion-setting.repository';
+export * from './promotion-utilization.repository';
 export * from './registration.repository';
 export * from './role.repository';
 export * from './subject.repository';

@@ -32,6 +32,7 @@ import { UserCourseModule } from './modules/user-course/user-course.module';
 import { UserVerifyModule } from './modules/user-verify/user-verify.module';
 import { UserModule } from './modules/user/user.module';
 import { RegistrationModule } from './modules/registration/registration.module';
+import { PromotionSettingModule } from './modules/promotion-setting/promotion-setting.module';
 @Module({
   imports: [
     EvaluationCriteriaModule,
@@ -62,6 +63,7 @@ import { RegistrationModule } from './modules/registration/registration.module';
     UploadModule,
     TimekeepingModule,
     RegistrationModule,
+    PromotionSettingModule,
   ],
   controllers: [AppController],
   providers: [

@@ -86,6 +86,8 @@ export enum MongoCollection {
   TIMEKEEPINGS = 'timekeepings',
   GENERAL_SETTINGS = 'general_settings',
   REGISTRATIONS = 'registrations',
+  PROMOTION_SETTINGS = 'promotion_settings',
+  PROMOTION_UTILIZATIONS = 'promotion_utilizations',
 }
 
 export enum Gender {

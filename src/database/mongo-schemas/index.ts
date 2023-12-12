@@ -5,6 +5,8 @@ export * from './general-setting.schema';
 export * from './lecture.schema';
 export * from './lesson-absent.schema';
 export * from './lesson.schema';
+export * from './promotion-setting.schema';
+export * from './promotion-utilization.schema';
 export * from './registration.schema';
 export * from './role.schema';
 export * from './subject.schema';
