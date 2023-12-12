@@ -31,6 +31,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { UserCourseModule } from './modules/user-course/user-course.module';
 import { UserVerifyModule } from './modules/user-verify/user-verify.module';
 import { UserModule } from './modules/user/user.module';
+import { RegistrationModule } from './modules/registration/registration.module';
 @Module({
   imports: [
     EvaluationCriteriaModule,
@@ -60,6 +61,7 @@ import { UserModule } from './modules/user/user.module';
     ExternalSystemsModule,
     UploadModule,
     TimekeepingModule,
+    RegistrationModule,
   ],
   controllers: [AppController],
   providers: [

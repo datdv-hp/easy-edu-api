@@ -71,3 +71,9 @@ export enum TimeKeepingType {
   CUTOFF_DATE = 'CUTOFF_DATE',
   END_OF_MONTH = 'END_OF_MONTH',
 }
+
+export enum RegistrationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}

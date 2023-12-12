@@ -35,8 +35,8 @@ UserCourseSchema.plugin(MongooseDelete, {
 });
 UserCourseSchema.index(
   {
-    user: 1,
-    course: 1,
+    userId: 1,
+    courseId: 1,
   },
   { unique: true },
 );

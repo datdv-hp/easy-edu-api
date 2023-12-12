@@ -15,7 +15,7 @@ import { IContext } from '@/common/interfaces';
 import { JoiValidationPipe } from '@/common/pipes/joi.validation.pipe';
 import { RemoveEmptyQueryPipe } from '@/common/pipes/removeEmptyQuery.pipe';
 import { ObjectIdSchema } from '@/common/validations';
-import { DELETE_COND } from '@/database/constants';
+import { DELETE_COND, SettingType } from '@/database/constants';
 import { Role } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
@@ -230,7 +230,7 @@ export class DropdownController {
   async getListCourseFormDropDown() {
     try {
       const options = await this.generalSettingRepo
-        .find({}, { name: '$value' })
+        .find({ type: SettingType.COURSE_FORM }, { name: '$value' })
         .lean()
         .exec();
       return new SuccessResponse(options);

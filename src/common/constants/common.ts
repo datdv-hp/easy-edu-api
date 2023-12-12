@@ -85,6 +85,7 @@ export enum MongoCollection {
   LESSON_ABSENTS = 'lesson_absents',
   TIMEKEEPINGS = 'timekeepings',
   GENERAL_SETTINGS = 'general_settings',
+  REGISTRATIONS = 'registrations',
 }
 
 export enum Gender {

@@ -1,9 +1,11 @@
 export * from './classroom.schema';
 export * from './course.schema';
 export * from './evaluation-criteria-setting.schema';
+export * from './general-setting.schema';
 export * from './lecture.schema';
 export * from './lesson-absent.schema';
 export * from './lesson.schema';
+export * from './registration.schema';
 export * from './role.schema';
 export * from './subject.schema';
 export * from './syllabus-history-edit.schema';
@@ -13,4 +15,3 @@ export * from './user-course.schema';
 export * from './user-token.schema';
 export * from './user-verify.schema';
 export * from './user.schema';
-export * from './general-setting.schema';
