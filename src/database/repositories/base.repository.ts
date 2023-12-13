@@ -83,6 +83,14 @@ export class BaseRepository<T extends Omit<Document, 'delete'>> {
     return this.model.updateMany(filter, update, options);
   }
 
+  updateOne(
+    filter: FilterQuery<T>,
+    update: UpdateQuery<T> | UpdateWithAggregationPipeline,
+    options: QueryOptions | null = null,
+  ) {
+    return this.model.updateOne(filter, update, options);
+  }
+
   delete(filter: FilterQuery<T>, deletedBy: string | Types.ObjectId) {
     return this.model.delete(filter, deletedBy);
   }

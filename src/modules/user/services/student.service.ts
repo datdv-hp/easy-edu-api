@@ -11,12 +11,14 @@ import {
   ClassroomStatus,
   CodePrefix,
   DELETE_COND,
+  RegistrationStatus,
   UserVerifyType,
 } from '@/database/constants';
 import { Classroom, User } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
   CourseRepository,
+  RegistrationRepository,
   UserCourseRepository,
   UserRepository,
   UserVerifyRepository,
@@ -44,6 +46,7 @@ export class StudentService extends BaseService {
     private readonly userCourseRepo: UserCourseRepository,
     private readonly courseRepo: CourseRepository,
     private readonly classroomRepo: ClassroomRepository,
+    private readonly registrationRepo: RegistrationRepository,
   ) {
     super(StudentService.name, configService);
   }
@@ -83,6 +86,17 @@ export class StudentService extends BaseService {
         type: UserVerifyType.ACTIVE_ACCOUNT,
       };
       await this.userVerifyRepo.create(verifyData, { session });
+
+      if (dto.registrationId) {
+        await this.registrationRepo
+          .updateOne(
+            { _id: dto.registrationId },
+            { status: RegistrationStatus.APPROVED },
+            { session },
+          )
+          .lean()
+          .exec();
+      }
 
       await this.mailService.sendVerifyEmail({
         email: dto.email,

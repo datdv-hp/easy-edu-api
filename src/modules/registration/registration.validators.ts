@@ -5,6 +5,10 @@ import { BaseFilterSchema } from '@/common/validations';
 import { RegistrationStatus } from '@/database/constants';
 
 const nameSchema = Joi.string().trim().max(INPUT_TEXT_MAX_LENGTH);
+
+export const StatusSchema = Joi.string().valid(
+  ...Object.values(RegistrationStatus),
+);
 export const createRegistrationBodySchema = Joi.object({
   email: emailSchema.required(),
   name: nameSchema.required(),
@@ -13,7 +17,5 @@ export const createRegistrationBodySchema = Joi.object({
 
 export const registrationFilterSchema = Joi.object({
   ...BaseFilterSchema,
-  statuses: Joi.array()
-    .items(Joi.valid(...Object.values(RegistrationStatus)))
-    .optional(),
+  statuses: Joi.array().items(StatusSchema).optional(),
 });

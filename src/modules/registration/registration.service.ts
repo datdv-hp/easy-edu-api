@@ -9,6 +9,7 @@ import { RegistrationRepository } from '@/database/repositories';
 import { OrderDirection } from '@/common/constants';
 import { FilterQuery } from 'mongoose';
 import { Registration } from '@/database/mongo-schemas';
+import { RegistrationStatus } from '@/database/constants';
 
 @Injectable()
 export class RegistrationService extends BaseService {
@@ -64,6 +65,19 @@ export class RegistrationService extends BaseService {
       return { items, totalItems };
     } catch (error) {
       this.logger.error('Error in findAllWithPaging: ', error);
+      throw error;
+    }
+  }
+
+  async switchStatus(id: string, status: RegistrationStatus) {
+    try {
+      const result = await this.registrationRepo
+        .findByIdAndUpdate(id, { status }, { new: true, runValidators: true })
+        .lean()
+        .exec();
+      return result;
+    } catch (error) {
+      this.logger.error('Error in switchStatus: ', error);
       throw error;
     }
   }

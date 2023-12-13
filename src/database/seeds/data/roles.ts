@@ -5,6 +5,11 @@ export const features = {
     // update: true,
     changePassword: true,
   },
+  registration: {
+    view: true,
+    createStudent: true,
+    delete: true,
+  },
   role: {
     view: true,
     create: true,

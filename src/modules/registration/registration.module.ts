@@ -4,6 +4,7 @@ import { RegistrationController } from './registration.controller';
 import { RegistrationService } from './registration.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Registration, RegistrationSchema } from '@/database/mongo-schemas';
+import { RegistrationCheckUtil } from './utils/registration-check.util';
 
 @Module({
   imports: [
@@ -12,7 +13,11 @@ import { Registration, RegistrationSchema } from '@/database/mongo-schemas';
     ]),
   ],
   controllers: [RegistrationController],
-  providers: [RegistrationService, RegistrationRepository],
+  providers: [
+    RegistrationService,
+    RegistrationRepository,
+    RegistrationCheckUtil,
+  ],
   exports: [RegistrationRepository],
 })
 export class RegistrationModule {}

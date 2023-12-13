@@ -28,6 +28,7 @@ const studentDetailSchema = Joi.object({
 export const createStudentSchema = Joi.object().keys({
   ...userCreateBaseSchema,
   studentDetail: studentDetailSchema.required(),
+  registrationId: ObjectIdSchema.optional(),
 });
 
 export const updateStudentSchema = Joi.object().keys({

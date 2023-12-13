@@ -54,7 +54,6 @@ export class CourseFormService extends BaseService {
 
       const orderDirection =
         params.orderDirection === OrderDirection.ASC ? 1 : -1;
-      console.log({ filter: JSON.stringify(filter) });
       const query: PipelineStage[] = [
         { $match: filter },
         { $project: { name: '$value', createdAt: 1 } },

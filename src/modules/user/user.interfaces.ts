@@ -93,6 +93,7 @@ interface IStudentDetail {
 
 export interface IStudentCreateFormData extends IUserFormDataBase {
   studentDetail?: IStudentDetail;
+  registrationId?: string;
 }
 
 export interface IStudentUpdateFormData extends IUserUpdateFormDataBase {
