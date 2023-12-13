@@ -5,6 +5,6 @@ import { Public } from './common/guards/authentication.guard';
 export class AppController {
   @Get('ping')
   pingAlive(): string {
-    return 'pong';
+    return 'ponggg';
   }
 }

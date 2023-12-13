@@ -113,6 +113,23 @@ export const features = {
     view: true,
     update: true,
   },
+  promotionSetting: {
+    view: true,
+    create: true,
+    update: true,
+    delete: true,
+  },
+  paymentMethodSetting: {
+    view: true,
+    create: true,
+    update: true,
+    delete: true,
+  },
+  tuition: {
+    update: true,
+    view: true,
+    viewPersonal: true,
+  },
 };
 
 export const masterRole = {
@@ -184,6 +201,10 @@ export const managerRole = {
     delete: true,
     download: true,
   },
+  tuition: {
+    view: true,
+    update: true,
+  },
 };
 
 export const teacherRole = {
@@ -253,6 +274,9 @@ export const studentRole = {
     viewPersonal: true,
   },
   syllabus: {
+    viewPersonal: true,
+  },
+  tuition: {
     viewPersonal: true,
   },
 };

@@ -5,13 +5,13 @@ import { getOrCreateConnection } from '../utils/db';
 export const up = async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const connection = await getOrCreateConnection();
-  await connection
+  const result = await connection
     .collection(MongoCollection.ROLES)
     .updateOne(
       { isMaster: true },
       { $set: { features: JSON.stringify(masterRole) } },
     );
-  console.log('Update master role successfully');
+  console.log('Update master role successfully', JSON.stringify(result));
   // write your upgrade script below
 };
 

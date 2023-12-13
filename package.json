@@ -23,7 +23,9 @@
     "seed:run": "ts-node src/database/seeds/index.ts",
     "migrate:create": "migrate create --template-file ./src/database/utils/template.ts --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\"",
     "migrate:up": "migrate --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\" up",
-    "migrate:down": "migrate --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\" down"
+    "migrate:down": "migrate --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\" down",
+    "migrate:clear": "migrate --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\" clear",
+    "migrate:list": "migrate --migrations-dir=\"./src/database/migrations\" --compiler=\"ts:./src/database/utils/ts-compiler.js\" list"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.462.0",
