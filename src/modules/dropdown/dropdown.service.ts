@@ -1,4 +1,5 @@
-import { MongoCollection, RoleType } from '@/common/constants';
+import { MongoCollection, RoleType, UserRole } from '@/common/constants';
+import { sto } from '@/common/helpers/common.functions.helper';
 import { BaseService } from '@/common/services/base.service';
 import { DELETE_COND } from '@/database/constants';
 import { Classroom, CourseDocument, Lesson } from '@/database/mongo-schemas';
@@ -18,7 +19,6 @@ import {
   ICourseDropdownFilter,
   ISubjectDropdownFilter,
 } from './dropdown.interface';
-import { sto } from '@/common/helpers/common.functions.helper';
 
 @Injectable()
 export class DropdownService extends BaseService {
@@ -230,6 +230,30 @@ export class DropdownService extends BaseService {
         .exec();
       return students;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async findPresenterDropdown(userId: string, roleType: RoleType) {
+    try {
+      if (roleType === RoleType.STUDENT) {
+        const userCourses = await this.userCourseRepo.find(
+          { userId: { $in: [userId] } },
+          { presenterId: 1 },
+        );
+        const presenterIds = userCourses.map((item) => item.presenterId);
+        const presenters = await this.userRepo.findByIds(presenterIds, {
+          name: 1,
+        });
+        return presenters;
+      }
+      const presenters = await this.userRepo
+        .find({ userRole: UserRole.MANAGER }, { name: 1 })
+        .lean()
+        .exec();
+      return presenters;
+    } catch (error) {
+      this.logger.error('Error in findPresenterDropdown: ', error);
       throw error;
     }
   }

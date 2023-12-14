@@ -2,6 +2,7 @@ import {
   HttpStatus,
   MongoCollection,
   RoleType,
+  UserRole,
   UserType,
 } from '@/common/constants';
 import { EasyContext } from '@/common/decorators/easy-context.decorator';
@@ -22,6 +23,8 @@ import {
   CourseRepository,
   GeneralSettingRepository,
   LectureRepository,
+  PaymentMethodSettingRepository,
+  PromotionSettingRepository,
   RoleRepository,
   SubjectRepository,
   SyllabusRepository,
@@ -67,7 +70,23 @@ export class DropdownController {
     private readonly syllabusRepo: SyllabusRepository,
     private readonly checkUtils: DropdownCheckUtils,
     private readonly lectureRepo: LectureRepository,
+    private readonly promotionSettingRepo: PromotionSettingRepository,
+    private readonly paymentMethodRepo: PaymentMethodSettingRepository,
   ) {}
+
+  @RolesGuard(['teacher.view', 'student.create', 'student.update'])
+  @Get('manager')
+  async getManagers() {
+    try {
+      const list = await this.userRepo
+        .find({ userRole: UserRole.MANAGER }, { _id: 1, name: 1 })
+        .lean()
+        .exec();
+      return new SuccessResponse(list);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   @RolesGuard([
     'course.view',
@@ -424,6 +443,62 @@ export class DropdownController {
         .exec();
 
       return new SuccessResponse(result);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @RolesGuard(['tuition.view', 'tuition.viewPersonal'])
+  @Get('presenter')
+  async getPresenterDropdown(@EasyContext() ctx: IContext) {
+    try {
+      const data = await this.service.findPresenterDropdown(
+        ctx.user.id,
+        ctx.roleType,
+      );
+      return new SuccessResponse(data);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Get('promotion')
+  async getPromotionDropdown(
+    @Query(
+      'courseId',
+      new RemoveEmptyQueryPipe(),
+      new JoiValidationPipe(ObjectIdSchema),
+    )
+    courseId: string,
+  ) {
+    try {
+      const existedCourse = await this.checkUtils.existedCourse(courseId);
+      if (!existedCourse.valid) return existedCourse.error;
+
+      const data = await this.promotionSettingRepo
+        .find(
+          {
+            applyForCourseIds: courseId,
+            $expr: { $lt: ['$usedTimes', '$times'] },
+          },
+          { name: 1, type: 1, value: 1 },
+        )
+        .lean()
+        .exec();
+      return new SuccessResponse(data);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Get('payment-method')
+  async getPaymentMethodDropdown() {
+    try {
+      const data = await this.paymentMethodRepo
+        .find({}, ['name'])
+        .lean()
+        .exec();
+      return new SuccessResponse(data);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

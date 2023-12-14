@@ -100,6 +100,7 @@ export class CourseController {
         times: 1,
         subjectIds: 1,
         description: 1,
+        tuition: 1,
       });
       if (!checkExistedCourse.valid) return checkExistedCourse.error;
 

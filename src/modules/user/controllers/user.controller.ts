@@ -1,4 +1,4 @@
-import { HttpStatus } from '@/common/constants';
+import { HttpStatus, UserType } from '@/common/constants';
 import { EasyContext } from '@/common/decorators/easy-context.decorator';
 import { Public } from '@/common/guards/authentication.guard';
 import {
@@ -62,6 +62,9 @@ export class UserController {
     body: IUpdateProfileFormData,
   ) {
     try {
+      if (body.type !== UserType.TEACHER) {
+        delete body.teacherDetail;
+      }
       const updatedUser = await this.service.updateProfile(userCtx.id, body);
       if (!updatedUser) {
         return new ErrorResponse(

@@ -1,9 +1,16 @@
 import { HttpStatus, UserRole, UserStatus, UserType } from '@/common/constants';
 import { ErrorResponse } from '@/common/helpers/response.helper';
 import { BaseService } from '@/common/services/base.service';
-import { Role, User, UserVerifyDocument } from '@/database/mongo-schemas';
+import {
+  Role,
+  Tuition,
+  TuitionPaymentHistory,
+  User,
+  UserVerifyDocument,
+} from '@/database/mongo-schemas';
 import {
   RoleRepository,
+  TuitionRepository,
   UserRepository,
   UserVerifyRepository,
 } from '@/database/repositories';
@@ -20,6 +27,7 @@ export class UserCheckUtils extends BaseService {
     private readonly userVerifyRepo: UserVerifyRepository,
     private readonly userRepo: UserRepository,
     private readonly roleRepo: RoleRepository,
+    private readonly tuitionRepo: TuitionRepository,
   ) {
     super(UserCheckUtils.name, configService);
   }
@@ -107,6 +115,41 @@ export class UserCheckUtils extends BaseService {
       return { valid: false, error };
     }
     return { valid: true, data: existedUser };
+  }
+
+  async usersExistByIds(
+    params: { ids: string[]; userRole?: UserRole; type?: UserType },
+    select: ProjectionType<User> = { _id: 1 },
+    errorKey = 'ids',
+  ) {
+    try {
+      const filter = { _id: { $in: params.ids } } as FilterQuery<User>;
+      if (params.userRole) {
+        filter.userRole = params.userRole;
+      }
+      if (params.type) {
+        filter.type = params.type;
+      }
+      const users = await this.repo.find(filter, select).lean().exec();
+      if (users.length !== params.ids.length) {
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.t('user.not_found'),
+          [
+            {
+              errorCode: HttpStatus.ITEM_NOT_FOUND,
+              key: errorKey,
+              message: this.i18n.t('user.not_found'),
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true, data: users };
+    } catch (error) {
+      this.logger.error('Error in usersExistByIds checkUtil: ', error);
+      throw error;
+    }
   }
 
   async notActivatedUserByEmail(
@@ -261,6 +304,47 @@ export class UserCheckUtils extends BaseService {
       return { valid: true, data: existedRole };
     } catch (error) {
       this.logger.error('Error in roleExistedById checkUtil: ', error);
+      throw error;
+    }
+  }
+
+  async StudentsNotExistAnyPayment(
+    userIds: string[],
+    select: ProjectionType<Tuition> = { _id: 1, userId: 1 },
+  ) {
+    try {
+      const tuitionsHadPayment = await this.tuitionRepo
+        .find({ userId: { $in: userIds }, paidValue: { $gt: 0 } }, select)
+        .lean()
+        .exec();
+      if (tuitionsHadPayment.length) {
+        const userIdsHadPayment = tuitionsHadPayment.map(
+          (tuition) => tuition.userId,
+        );
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.t(
+            'user.student.cannotDeleteStudentHaveTuitionPaymentHistory',
+          ),
+          [
+            {
+              key: 'tuition',
+              errorCode: HttpStatus.CONFLICT,
+              message: this.i18n.t(
+                'user.student.cannotDeleteStudentHaveTuitionPaymentHistory',
+              ),
+              data: userIdsHadPayment,
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true };
+    } catch (error) {
+      this.logger.error(
+        'Error in StudentsNotExistAnyPayment checkUtil: ',
+        error,
+      );
       throw error;
     }
   }

@@ -13,6 +13,7 @@ export const CodePrefix = {
   COURSE: 'CS',
   CLASSROOM: 'CL',
   LESSON: 'LS',
+  TUITION: 'HP',
 };
 
 export enum UserVerifyType {

@@ -42,42 +42,6 @@ export class LessonAbsentService extends BaseService {
     const session = await this.repo.model.startSession();
     try {
       session.startTransaction();
-
-      // const query: PipelineStage[] = [
-      //   { $match: { _id: sto(id) } },
-      //   { $limit: 1 },
-      //   { $set: { status: body.status } },
-      //   {
-      //     $lookup: {
-      //       from: MongoCollection.USERS,
-      //       localField: 'userId',
-      //       foreignField: '_id',
-      //       as: 'user',
-      //       pipeline: [
-      //         { $match: DELETE_COND },
-      //         { $limit: 1 },
-      //         { $project: { email: 1 } },
-      //       ],
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: MongoCollection.LESSONS,
-      //       localField: 'lessonId',
-      //       foreignField: '_id',
-      //       as: 'lesson',
-      //       pipeline: [
-      //         { $match: DELETE_COND },
-      //         { $limit: 1 },
-      //         { $project: { name: 1, startTime: 1, endTime: 1, date: 1 } },
-      //       ],
-      //     },
-      //   },
-      //   { $unwind: '$user' },
-      //   { $unwind: '$lesson' },
-      //   { $project: { status: 1, reason: 1, user: 1, lesson: 1 } },
-      // ];
-      // const [request] = await this.repo.model.aggregate(query).exec();
       const result = await this.repo
         .findByIdAndUpdate(
           id,

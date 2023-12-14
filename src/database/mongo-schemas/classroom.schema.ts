@@ -47,6 +47,12 @@ export class Classroom extends MongoBaseSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Syllabus.name }] })
   syllabusIds: Types.ObjectId[];
+
+  @Prop({ type: Date, required: true })
+  paymentStartDate: Date;
+
+  @Prop({ type: Date, required: true })
+  paymentEndDate: Date;
 }
 
 export const ClassroomSchema = SchemaFactory.createForClass(Classroom);

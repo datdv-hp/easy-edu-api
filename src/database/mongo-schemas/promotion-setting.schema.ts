@@ -9,8 +9,6 @@ import { PromotionType } from '../constants';
 export type PromotionSettingDocument = HydratedDocument<PromotionSetting>;
 @Schema({ timestamps: true, collection: MongoCollection.PROMOTION_SETTINGS })
 export class PromotionSetting extends MongoBaseSchema {
-  id: Types.ObjectId;
-
   @Prop({ type: String, required: true })
   name: string;
 

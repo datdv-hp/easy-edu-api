@@ -37,5 +37,6 @@ import { UserModule } from '../user/user.module';
     PromotionSettingCheckUtils,
     PromotionUtilizationRepository,
   ],
+  exports: [PromotionUtilizationRepository, PromotionSettingRepository],
 })
 export class PromotionSettingModule {}

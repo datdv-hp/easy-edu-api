@@ -1,4 +1,4 @@
-import { Gender } from '@/common/constants';
+import { Gender, UserType } from '@/common/constants';
 import { IFilterBase } from '@/common/interfaces';
 import { StudentDegree } from '@/database/constants';
 
@@ -26,7 +26,14 @@ export interface ICreateUserFormData {
 }
 
 export type IUpdateProfileFormData = Partial<
-  Omit<ICreateUserFormData, 'email' | 'phone'>
+  Omit<ICreateUserFormData, 'email' | 'phone'> & {
+    teacherDetail?: {
+      degree?: string;
+      workUnit?: string;
+      note?: string;
+    };
+    type: UserType;
+  }
 >;
 
 // TEACHER
@@ -84,6 +91,7 @@ export interface IStudentClassroomFilter extends IFilterBase {
 interface ICourseDetail {
   courseId: string;
   subjectIds?: string[];
+  presenterId: string;
 }
 
 interface IStudentDetail {
@@ -98,7 +106,10 @@ export interface IStudentCreateFormData extends IUserFormDataBase {
 
 export interface IStudentUpdateFormData extends IUserUpdateFormDataBase {
   studentDetail?: IStudentDetail;
-  updateCourseData?: Record<string, string[]>; // key: courseId, value: subjectIds
+  updateCourseData?: Record<
+    string,
+    { subjectIds: string[]; presenterId: string }
+  >;
   removeCourseIds: string[];
 }
 

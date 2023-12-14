@@ -14,6 +14,10 @@ const participantIdsSChema = Joi.array().items(ObjectIdSchema).unique();
 const colorSchema = Joi.string().regex(new RegExp(Regex.COLOR));
 const teacherIdsSchema = Joi.array().items(ObjectIdSchema).unique();
 const syllabusIdsSchema = Joi.array().items(ObjectIdSchema).unique();
+const paymentDateSchema = Joi.object({
+  startDate: startDateSchema.required(),
+  endDate: endDateSchema.required(),
+});
 
 export const classroomCreateSchema = Joi.object({
   name: nameSchema.required(),
@@ -24,6 +28,7 @@ export const classroomCreateSchema = Joi.object({
   color: colorSchema.optional(),
   teacherIds: teacherIdsSchema.optional(),
   syllabusIds: syllabusIdsSchema.optional(),
+  paymentDate: paymentDateSchema.required(),
 });
 
 export const classroomUpdateSchema = Joi.object({
@@ -39,6 +44,7 @@ export const classroomUpdateSchema = Joi.object({
   color: colorSchema.optional(),
   teacherIds: teacherIdsSchema.optional(),
   syllabusIds: syllabusIdsSchema.optional(),
+  paymentDate: paymentDateSchema.optional(),
 });
 
 export const classFilterSchema = Joi.object({

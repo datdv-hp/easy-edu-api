@@ -382,7 +382,13 @@ export class LessonController {
     @EasyContext() context?: IContext,
   ) {
     try {
-      const checkExistedLesson = await this.checkUtils.existedLessonById(id);
+      const checkExistedLesson = await this.checkUtils.existedLessonById(id, {
+        date: 1,
+        startTime: 1,
+        endTime: 1,
+        classroomId: 1,
+        studentIds: 1,
+      });
       if (!checkExistedLesson.valid) return checkExistedLesson.error;
       const existedLesson = checkExistedLesson.data;
       const bodyKeys = Object.keys(body);
@@ -630,7 +636,7 @@ export class LessonController {
           ),
         });
       }
-      if (isUpcomingInLimitTime) {
+      if (isUpComing && isUpcomingInLimitTime) {
         errors.push({
           key: 'lessonUpcoming',
           errorCode: HttpStatus.ITEM_INVALID,

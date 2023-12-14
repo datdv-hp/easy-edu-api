@@ -22,6 +22,7 @@ const studentDetailSchema = Joi.object({
   courses: Joi.array().items({
     courseId: ObjectIdSchema,
     subjectIds: Joi.array().items(ObjectIdSchema).unique().allow(null),
+    presenterId: ObjectIdSchema.allow(null).optional(),
   }),
 });
 

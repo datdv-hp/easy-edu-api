@@ -1,49 +1,43 @@
+import { EasyContext } from '@/common/decorators/easy-context.decorator';
+import {
+  ErrorResponse,
+  SuccessResponse,
+} from '@/common/helpers/response.helper';
+import { IContext } from '@/common/interfaces';
+import { JoiValidationPipe } from '@/common/pipes/joi.validation.pipe';
+import { ModifyFilterQueryPipe } from '@/common/pipes/modifyListQuery.pipe';
+import { RemoveEmptyQueryPipe } from '@/common/pipes/removeEmptyQuery.pipe';
+import { TrimBodyPipe } from '@/common/pipes/trim.body.pipe';
+import { ObjectIdSchema, deleteManySchema } from '@/common/validations';
 import {
   Body,
   Controller,
   Delete,
   Get,
-  Inject,
   InternalServerErrorException,
   Param,
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { Connection } from 'mongoose';
+import dayjs from 'dayjs';
+import { I18nService } from 'nestjs-i18n';
 import { HttpStatus } from 'src/common/constants';
+import { RolesGuard } from 'src/common/guards/authorization.guard';
+import {
+  IPromotionSettingCreateBody,
+  IPromotionSettingListFilter,
+  IPromotionSettingUpdateBody,
+  IPromotionUtilizationListFilter,
+} from './promotion-setting.interfaces';
 import { PromotionSettingService } from './promotion-setting.service';
 import {
   promotionSettingCreateBodySchema,
   promotionSettingListFilterSchema,
+  promotionSettingUpdateBodySchema,
   promotionUtilizationListFilterSchema,
 } from './promotion-setting.validator';
 import { PromotionSettingCheckUtils } from './utils/promotion-setting-check.utils';
-import { promotionSettingUpdateBodySchema } from './promotion-setting.validator';
-import { I18nService } from 'nestjs-i18n';
-import {
-  AuthorizationGuard,
-  RolesGuard,
-} from 'src/common/guards/authorization.guard';
-import {
-  IPromotionSettingListFilter,
-  IPromotionUtilizationListFilter,
-  IPromotionSettingCreateBody,
-  IPromotionSettingUpdateBody,
-} from './promotion-setting.interfaces';
-import dayjs from 'dayjs';
-import { TrimBodyPipe } from '@/common/pipes/trim.body.pipe';
-import { JoiValidationPipe } from '@/common/pipes/joi.validation.pipe';
-import { ModifyFilterQueryPipe } from '@/common/pipes/modifyListQuery.pipe';
-import {
-  ErrorResponse,
-  SuccessResponse,
-} from '@/common/helpers/response.helper';
-import { ObjectIdSchema, deleteManySchema } from '@/common/validations';
-import { RemoveEmptyQueryPipe } from '@/common/pipes/removeEmptyQuery.pipe';
-import { IContext } from '@/common/interfaces';
-import { EasyContext } from '@/common/decorators/easy-context.decorator';
 
 @Controller('promotion')
 export class PromotionSettingController {

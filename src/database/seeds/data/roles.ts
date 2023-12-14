@@ -2,7 +2,7 @@ import { RoleType } from '../../../common/constants';
 
 export const features = {
   user: {
-    // update: true,
+    update: true,
     changePassword: true,
   },
   registration: {
@@ -209,7 +209,7 @@ export const managerRole = {
 
 export const teacherRole = {
   user: {
-    // update: true,
+    update: true,
     changePassword: true,
   },
   schedule: {
@@ -247,7 +247,7 @@ export const teacherRole = {
 
 export const studentRole = {
   user: {
-    // update: true,
+    update: true,
     changePassword: true,
   },
   schedule: {

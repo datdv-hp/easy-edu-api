@@ -20,6 +20,7 @@ import { TeacherService } from './services/teacher.service';
 import { UserService } from './services/user.service';
 import { UserCheckUtils } from './utils/user-check.utils';
 import { RegistrationModule } from '../registration/registration.module';
+import { TuitionModule } from '../tuition/tuition.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RegistrationModule } from '../registration/registration.module';
     forwardRef(() => ClassroomModule),
     forwardRef(() => LessonModule),
     forwardRef(() => RegistrationModule),
+    forwardRef(() => TuitionModule),
   ],
   controllers: [
     UserController,

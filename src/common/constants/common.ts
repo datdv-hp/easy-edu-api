@@ -88,6 +88,9 @@ export enum MongoCollection {
   REGISTRATIONS = 'registrations',
   PROMOTION_SETTINGS = 'promotion_settings',
   PROMOTION_UTILIZATIONS = 'promotion_utilizations',
+  TUITION_PAYMENT_HISTORIES = 'tuition_payment_histories',
+  PAYMENT_METHOD_SETTINGS = 'payment_method_settings',
+  TUITIONS = 'tuitions',
 }
 
 export enum Gender {

@@ -222,6 +222,7 @@ export class LessonService extends BaseService {
           teacher: 1,
           course: 1,
           createdAt: 1,
+          isUseGoogleMeet: 1,
         },
       },
       {
@@ -298,7 +299,7 @@ export class LessonService extends BaseService {
             code: 1,
             room: 1,
             meetUrl: 1,
-            isUserGoogleMeet: 1,
+            isUseGoogleMeet: 1,
           },
         },
       ];

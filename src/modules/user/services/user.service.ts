@@ -1,5 +1,5 @@
 import ConfigKey from '@/common/config/config-key';
-import { MongoCollection, UserStatus } from '@/common/constants';
+import { MongoCollection, UserStatus, UserType } from '@/common/constants';
 import {
   hashPassword,
   randomPassword,
@@ -8,7 +8,11 @@ import {
 import { BaseService } from '@/common/services/base.service';
 import { DELETE_COND, UserVerifyType } from '@/database/constants';
 import { User } from '@/database/mongo-schemas';
-import { UserRepository, UserVerifyRepository } from '@/database/repositories';
+import {
+  UserCourseRepository,
+  UserRepository,
+  UserVerifyRepository,
+} from '@/database/repositories';
 import { MailService } from '@/modules/mail/mail.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -23,6 +27,7 @@ export class UserService extends BaseService {
     private readonly repo: UserRepository,
     private readonly userVerifyRepo: UserVerifyRepository,
     private readonly mailService: MailService,
+    private readonly userCourseRepo: UserCourseRepository,
   ) {
     super(UserService.name, configService);
   }
@@ -58,6 +63,7 @@ export class UserService extends BaseService {
         },
         { $unwind: '$role' },
         { $addFields: { features: '$role.features' } },
+        { $limit: 1 },
         {
           $project: {
             password: 0,
@@ -67,13 +73,20 @@ export class UserService extends BaseService {
         },
       ];
       const result = await this.model.aggregate(query).exec();
-      // TODO: return course info if user is STUDENT
       const user = result[0];
       const features = JSON.parse(user?.features);
       Object.assign(user, {
         features: compactUserFeatures(features),
       });
-
+      if (user.type === UserType.STUDENT) {
+        const userCourses = await this.userCourseRepo
+          .find({ userId: user._id }, { courseId: 1 })
+          .populate('courseId', { name: 1 })
+          .lean()
+          .exec();
+        const courses = userCourses.map((userCourse) => userCourse.courseId);
+        Object.assign(user, { courses });
+      }
       return user;
     } catch (error) {
       this.logger.error('Error in getMyProfile service', error);

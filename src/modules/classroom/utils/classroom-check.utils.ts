@@ -1,12 +1,13 @@
 import { HttpStatus } from '@/common/constants';
 import { ErrorResponse } from '@/common/helpers/response.helper';
 import { BaseService } from '@/common/services/base.service';
-import { Classroom } from '@/database/mongo-schemas';
+import { Classroom, Tuition } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
   CourseRepository,
   LessonRepository,
   SyllabusRepository,
+  TuitionRepository,
   UserRepository,
 } from '@/database/repositories';
 import { Injectable } from '@nestjs/common';
@@ -23,6 +24,7 @@ export class ClassroomCheckUtils extends BaseService {
     private readonly repo: ClassroomRepository,
     private readonly lessonRepo: LessonRepository,
     protected readonly configService: ConfigService,
+    private readonly tuitionRepo: TuitionRepository,
   ) {
     super(ClassroomCheckUtils.name, configService);
   }
@@ -53,7 +55,41 @@ export class ClassroomCheckUtils extends BaseService {
       }
       return { valid: true, data: existedClassroom };
     } catch (error) {
-      this.logger.error('Error in existedById service', error);
+      this.logger.error('Error in ClassroomExistById service', error);
+      throw error;
+    }
+  }
+
+  async ClassroomsExistByIds(
+    ids: string[],
+    select: ProjectionType<Classroom> = { _id: 1 },
+    errorKey = 'ids',
+  ) {
+    try {
+      const existedClassrooms = await this.repo
+        .findByIds(ids, select)
+        .lean()
+        .exec();
+      const classroomIds = existedClassrooms.map((item) => item._id.toString());
+      const notExistedClassroomIds = difference(ids, classroomIds);
+      if (notExistedClassroomIds) {
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.translate('classroom.notFound'),
+          [
+            {
+              key: errorKey,
+              errorCode: HttpStatus.ITEM_NOT_FOUND,
+              message: this.i18n.translate('classroom.notFound'),
+              data: notExistedClassroomIds,
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true, data: existedClassrooms };
+    } catch (error) {
+      this.logger.error('Error in ClassroomsExistByIds service', error);
       throw error;
     }
   }
@@ -80,7 +116,7 @@ export class ClassroomCheckUtils extends BaseService {
       }
       return { valid: true, data: course };
     } catch (error) {
-      this.logger.error('Error in existedCourseById service', error);
+      this.logger.error('Error in CourseExistById service', error);
       throw error;
     }
   }
@@ -198,6 +234,45 @@ export class ClassroomCheckUtils extends BaseService {
       return { valid: true };
     } catch (error) {
       this.logger.error('Error in notExistedLessonOfClassrooms service', error);
+      throw error;
+    }
+  }
+
+  async NotExistAnyPaidTuitionByStudentIdsAndClassroomIds(
+    ids: string[],
+    select: ProjectionType<Tuition> = { _id: 1 },
+  ) {
+    try {
+      const paidTuition = await this.tuitionRepo
+        .checkAnyPaidTuitionByStudentIdsAndClassroomIds(
+          { classroomIds: ids },
+          select,
+        )
+        .lean()
+        .exec();
+
+      if (paidTuition) {
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.t('errors.400'),
+          [
+            {
+              key: 'classroomHasPayment',
+              errorCode: HttpStatus.ITEM_INVALID,
+              message: this.i18n.t(
+                'classroom.cannotDeleteClassroomBecauseHavingPayment',
+              ),
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true };
+    } catch (error) {
+      this.logger.error(
+        'Error in NotExistAnyPaidTuitionByStudentIdsAndClassroomIds service',
+        error,
+      );
       throw error;
     }
   }

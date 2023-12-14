@@ -1,6 +1,6 @@
 {
-    "notFound": "Lớp học không tồn tại",
-    "notAllowDeleteByLesson": "Lớp học vẫn còn buổi học",
-    "inValidDate": "Dữ liệu ngày không hợp lệ"
-  }
-  
+  "notFound": "Lớp học không tồn tại",
+  "notAllowDeleteByLesson": "Lớp học vẫn còn buổi học",
+  "inValidDate": "Dữ liệu ngày không hợp lệ",
+  "cannotDeleteClassroomBecauseHavingPayment": "Xóa lớp học không thành công. Lớp học đã có khoản thanh toán học phí"
+}

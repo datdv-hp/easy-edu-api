@@ -13,6 +13,7 @@ const descriptionSchema = Joi.string().max(TEXTAREA_MAX_LENGTH).allow('', null);
 const subjectIdsSchema = Joi.array().items(ObjectIdSchema).unique();
 const courseFormIdsSchema = Joi.array().items(ObjectIdSchema).unique();
 const timeSchema = Joi.number().max(TIME_MAX_LENGTH);
+const tuitionSchema = Joi.number().min(0);
 
 export const createCourseSchema = Joi.object({
   name: nameSchema.required(),
@@ -20,6 +21,7 @@ export const createCourseSchema = Joi.object({
   subjectIds: subjectIdsSchema.optional(),
   courseFormIds: courseFormIdsSchema.optional(),
   times: timeSchema.required(),
+  tuition: tuitionSchema.required(),
 });
 
 export const updateCourseSchema = Joi.object({
@@ -28,6 +30,7 @@ export const updateCourseSchema = Joi.object({
   subjectIds: subjectIdsSchema.optional(),
   courseFormIds: courseFormIdsSchema.optional(),
   times: timeSchema.optional(),
+  tuition: tuitionSchema.optional(),
 });
 
 export const courseDropdownSchema = Joi.object({

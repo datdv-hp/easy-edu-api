@@ -1,0 +1,8 @@
+{
+  "notFound": "Không tìm thấy thông tin học phí của học sinh",
+  "exceedPaymentValue": "Giá trị thanh toán không được vượt quá học phí cần thanh toán: {shortageValue}",
+  "paymentHasAlreadyCompleted": "Học sinh đã hoàn thành học phí",
+  "duplicatedApplyPromotion": "Chương trình khuyến mãi áp dụng bị trùng lặp",
+  "duplicatedPriority": "Độ ưu tiên bị trùng lặp",
+  "canNotChangePromotions": "Học phí đang được thanh toán, không được thay đổi chương trình khuyến mãi"
+}

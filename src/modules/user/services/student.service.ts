@@ -55,7 +55,7 @@ export class StudentService extends BaseService {
     return this.repo.model;
   }
 
-  async createStudent(dto: IStudentCreateFormData) {
+  async createStudent(dto: IStudentCreateFormData, createdBy: string) {
     const session = await this.model.startSession();
     try {
       session.startTransaction();
@@ -77,6 +77,8 @@ export class StudentService extends BaseService {
         userId: createdUser._id,
         courseId: course.courseId,
         subjectIds: course?.subjectIds,
+        createdBy: createdBy,
+        presenterId: course?.presenterId,
       }));
       await this.userCourseRepo.createMany(userCourses, { session });
 
@@ -273,11 +275,12 @@ export class StudentService extends BaseService {
       const [user] = await this.model.aggregate(pipelines).exec();
       const userCourses = await this.userCourseRepo.find(
         { userId: id },
-        { courseId: 1, subjectIds: 1 },
+        { courseId: 1, subjectIds: 1, presenterId: 1 },
       );
       const studentCourseInfo = userCourses.map((item) => ({
         courseId: item.courseId,
         subjectIds: item.subjectIds,
+        presenterId: item.presenterId,
       }));
       const courseIds = userCourses.map((item) => item.courseId);
       const courses = await this.courseRepo
@@ -382,7 +385,7 @@ export class StudentService extends BaseService {
       if (dto.studentDetail) {
         const { removeCourseIds, updateCourseData } = dto;
         if (removeCourseIds.length) {
-          await this.userCourseRepo.model
+          await this.userCourseRepo
             .delete(
               { courseId: { $in: removeCourseIds }, userId: id },
               dto.updatedBy,
@@ -392,11 +395,17 @@ export class StudentService extends BaseService {
             .exec();
         }
         const query = [];
-        forEach(updateCourseData, (subjectIds, courseId) => {
+        forEach(updateCourseData, (params, courseId) => {
           query.push({
             updateOne: {
               filter: { userId: id, courseId },
-              update: { $set: { userId: id, subjectIds, courseId } },
+              update: {
+                $set: {
+                  subjectIds: params.subjectIds,
+                  presenterId: params.presenterId,
+                  updatedBy: dto.updatedBy,
+                },
+              },
               upsert: true,
             },
           });
@@ -440,14 +449,14 @@ export class StudentService extends BaseService {
         .lean()
         .exec();
 
-      const classrooms = await this.classroomRepo.model
+      const classrooms = await this.classroomRepo
         .find({ participantIds: { $in: ids } })
         .session(session)
         .lean()
         .exec();
 
       const classroomIds = classrooms.map((classroom) => classroom._id);
-      await this.classroomRepo.model.updateMany(
+      await this.classroomRepo.updateMany(
         { _id: { $in: classroomIds } },
         { $pull: { participantIds: { $in: ids } } },
         { session },

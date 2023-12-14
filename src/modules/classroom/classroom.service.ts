@@ -14,10 +14,13 @@ import { CodePrefix, DELETE_COND } from '@/database/constants';
 import { Classroom, Lesson, Syllabus } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
+  CourseRepository,
   LectureRepository,
   LessonRepository,
   SyllabusRepository,
   TimekeepingRepository,
+  TuitionRepository,
+  UserCourseRepository,
   UserRepository,
 } from '@/database/repositories';
 import dayjs from '@/plugins/dayjs';
@@ -42,12 +45,11 @@ export class ClassroomService extends BaseService {
     private readonly lectureRepo: LectureRepository,
     private readonly userRepo: UserRepository,
     private readonly timekeepingRepo: TimekeepingRepository,
+    private readonly userCourseRepo: UserCourseRepository,
+    private readonly tuitionRepo: TuitionRepository,
+    private readonly courseRepo: CourseRepository,
   ) {
     super(ClassroomService.name, configService);
-  }
-
-  private get model() {
-    return this.repo.model;
   }
 
   async create(
@@ -55,8 +57,9 @@ export class ClassroomService extends BaseService {
       createdBy: Types.ObjectId;
       updatedBy: Types.ObjectId;
     },
+    courseInfo: { tuition: number },
   ) {
-    const session = await this.model.startSession();
+    const session = await this.repo.model.startSession();
     try {
       session.startTransaction();
       const latestClassroomOfYear = await this.repo
@@ -71,10 +74,42 @@ export class ClassroomService extends BaseService {
         code,
         participantIds: stos(dto.participantIds),
         syllabusIds: stos(dto.syllabusIds),
+        paymentStartDate: dto?.paymentDate.startDate,
+        paymentEndDate: dto?.paymentDate.endDate,
       };
       const createdClassroom = await this.repo.create(newClassroom, {
         session,
       });
+
+      if (dto?.participantIds?.length) {
+        const userCourses = await this.userCourseRepo.model
+          .find({
+            userId: { $in: dto.participantIds },
+            courseId: dto.courseId,
+          })
+          .lean()
+          .exec();
+        const presenterIdsMapByStudentId = Object.fromEntries(
+          userCourses.map((item) => [
+            item.userId.toString(),
+            item.presenterId?.toString(),
+          ]),
+        );
+        await this.tuitionRepo.CreateTuitionForStudents(
+          {
+            classroomId: createdClassroom._id,
+            courseId: dto.courseId,
+            studentIds: dto.participantIds,
+            createdBy: dto.createdBy,
+            updatedBy: dto.updatedBy,
+            tuition: courseInfo.tuition,
+            paymentStartDate: dto?.paymentDate.startDate,
+            paymentEndDate: dto?.paymentDate.endDate,
+            presenterIdsMapByStudentId,
+          },
+          session,
+        );
+      }
       await session.commitTransaction();
       return createdClassroom;
     } catch (error) {
@@ -156,6 +191,8 @@ export class ClassroomService extends BaseService {
             syllabusIds: 1,
             status: 1,
             course: 1,
+            paymentStartDate: 1,
+            paymentEndDate: 1,
           },
         },
         {
@@ -170,7 +207,7 @@ export class ClassroomService extends BaseService {
         },
       ];
 
-      const data = await this.model.aggregate(query).exec();
+      const data = await this.repo.model.aggregate(query).exec();
       const items = get(data, '[0].data', []);
       const totalItems = get(data, '0.total.0.count', 0);
       return { items, totalItems };
@@ -210,6 +247,7 @@ export class ClassroomService extends BaseService {
             ],
           },
         },
+        { $limit: 1 },
         {
           $project: {
             name: 1,
@@ -219,10 +257,12 @@ export class ClassroomService extends BaseService {
             endDate: 1,
             participants: 1,
             color: 1,
+            paymentStartDate: 1,
+            paymentEndDate: 1,
           },
         },
       ];
-      const detail = (await this.model.aggregate(query).exec())?.[0];
+      const detail = (await this.repo.model.aggregate(query).exec())?.[0];
       if (!detail) return null;
 
       const lessons = await this.lessonRepo
@@ -256,22 +296,103 @@ export class ClassroomService extends BaseService {
   async update(
     id: string,
     params: IClassroomUpdateFormData & { updatedBy: Types.ObjectId },
-    syllabusIds: Types.ObjectId[],
+    oldClassroomInfo: {
+      courseId: Types.ObjectId;
+      syllabusIds: Types.ObjectId[];
+      participantIds: Types.ObjectId[];
+      paymentStartDate: Date;
+      paymentEndDate: Date;
+    },
   ) {
-    const session = await this.model.startSession();
+    const session = await this.repo.model.startSession();
     try {
       session.startTransaction();
+      if (params.participantIds) {
+        const oldParticipants = oldClassroomInfo.participantIds?.map((id) =>
+          id.toString(),
+        );
+        const newParticipantIds: string[] = difference(
+          params.participantIds,
+          oldParticipants,
+        );
+        const removeParticipantIds: string[] = difference(
+          oldParticipants,
+          params.participantIds,
+        );
+        if (newParticipantIds?.length) {
+          const [course, tuitions, userCourses] = await Promise.all([
+            this.courseRepo
+              .findById(oldClassroomInfo.courseId, { tuition: 1 })
+              .lean()
+              .exec(),
+            this.tuitionRepo
+              .find(
+                { userId: { $in: newParticipantIds }, classroomId: id },
+                { userId: 1 },
+              )
+              .lean()
+              .exec(),
+            this.userCourseRepo
+              .find({
+                userId: { $in: newParticipantIds },
+                courseId: oldClassroomInfo.courseId,
+              })
+              .lean()
+              .exec(),
+          ]);
+          const presenterIdsMapByStudentId = Object.fromEntries(
+            userCourses.map((item) => [
+              item.userId.toString(),
+              item.presenterId?.toString(),
+            ]),
+          );
+          // Check if any student in new adding student list has already had tuition
+          const newStudentIdsHadTuition = tuitions?.map((tuition) =>
+            tuition.userId.toString(),
+          );
+          const newStudentIdsHaveToInitTuition = difference(
+            newParticipantIds,
+            newStudentIdsHadTuition,
+          );
+          const paymentStartDate =
+            params?.paymentDate?.startDate || oldClassroomInfo.paymentStartDate;
+          const paymentEndDate =
+            params?.paymentDate?.endDate || oldClassroomInfo.paymentEndDate;
+          await this.tuitionRepo.CreateTuitionForStudents(
+            {
+              classroomId: id,
+              courseId: oldClassroomInfo.courseId,
+              studentIds: newStudentIdsHaveToInitTuition,
+              createdBy: params.updatedBy,
+              updatedBy: params.updatedBy,
+              tuition: course.tuition,
+              paymentStartDate: paymentStartDate,
+              paymentEndDate: paymentEndDate,
+              presenterIdsMapByStudentId,
+            },
+            session,
+          );
+        }
+
+        // Removing tuition for removed students
+        if (removeParticipantIds?.length) {
+          await this.tuitionRepo.RemoveTuitionForStudents(
+            {
+              classroomId: id,
+              studentIds: removeParticipantIds,
+              deletedBy: params.updatedBy,
+            },
+            session,
+          );
+        }
+      }
       if (params?.courseId) {
-        Object.assign(params, {
-          course: params?.courseId,
-        });
+        Object.assign(params, { courseId: params?.courseId });
       }
 
       if (params?.syllabusIds) {
-        const removeSyllabusIds = difference(
-          syllabusIds,
-          stos(params.syllabusIds),
-        );
+        const _syllabusIds = params.syllabusIds.map((id) => id.toString());
+        const removeSyllabusIds = difference(_syllabusIds, params.syllabusIds);
         await this.lessonRepo
           .updateMany(
             { classroomId: id, syllabusIds: { $in: removeSyllabusIds } },
@@ -279,6 +400,13 @@ export class ClassroomService extends BaseService {
             { session, lean: true },
           )
           .exec();
+      }
+      if (params.paymentDate) {
+        Object.assign(params, {
+          paymentStartDate: params.paymentDate.startDate,
+          paymentEndDate: params.paymentDate.endDate,
+        });
+        delete params.paymentDate;
       }
 
       const updatedClassroom = await this.repo
@@ -305,11 +433,16 @@ export class ClassroomService extends BaseService {
     ids: (Types.ObjectId | string)[],
     deletedBy: Types.ObjectId,
   ): Promise<boolean> {
-    const session = await this.model.startSession();
+    const session = await this.repo.model.startSession();
     try {
       session.startTransaction();
-      await this.model
+      await this.repo.model
         .delete({ _id: { $in: ids } }, deletedBy)
+        .session(session)
+        .lean()
+        .exec();
+      await this.tuitionRepo
+        .delete({ classroomId: { $in: ids } }, deletedBy)
         .session(session)
         .lean()
         .exec();
