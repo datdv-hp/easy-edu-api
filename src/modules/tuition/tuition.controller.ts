@@ -74,7 +74,6 @@ export class TuitionController {
         if (!checkPresenters.valid) return checkPresenters.error;
       }
       let userIds: string[];
-      console.log('roleType', context.roleType);
       if (context.roleType === RoleType.STUDENT) {
         userIds = [context.user.id];
       }
@@ -150,7 +149,7 @@ export class TuitionController {
           checkExistedPromotions.data.forEach((item) => {
             const id = item._id.toString();
             Object.assign(newPromotionsMapObject[id], {
-              id: item._id,
+              _id: item._id,
               name: item.name,
               value: item.value,
               type: item.type,

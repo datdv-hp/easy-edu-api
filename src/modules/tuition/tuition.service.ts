@@ -98,7 +98,6 @@ export class TuitionService extends BaseService {
       if (!filter.$and.length) {
         delete filter.$and;
       }
-      console.log('filter', JSON.stringify(filter));
       const data = await this.tuitionRepo.model.aggregate([
         { $match: filter },
         {
@@ -332,7 +331,7 @@ export class TuitionService extends BaseService {
       updatedBy: string;
       oldPromotionIds?: string[];
     },
-    updatedPromotionsObject?: Record<string, Partial<TuitionPromotionInfo>>,
+    updatedPromotionsObject?: Record<string, TuitionPromotionInfo>,
   ) {
     const session = await this.tuitionRepo.model.startSession();
     try {
@@ -343,7 +342,7 @@ export class TuitionService extends BaseService {
         paymentEndDate: params.payment?.endDate,
       };
       const { id: tuitionId, originalValue } = tuitionInfo;
-      let updatedTuitionPromotions: Partial<TuitionPromotionInfo>[];
+      let updatedTuitionPromotions: TuitionPromotionInfo[];
       let remainValue = originalValue;
       if (params.promotions) {
         // Recalculate promotion value, shortage value, pay value

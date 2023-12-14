@@ -59,12 +59,12 @@ export class StudentService extends BaseService {
     const session = await this.model.startSession();
     try {
       session.startTransaction();
-      const latestTeacher = await this.repo
-        .findLatestUserOfYear(UserType.TEACHER)
+      const latestStudent = await this.repo
+        .findLatestUserOfYear(UserType.STUDENT)
         .lean()
         .exec();
-      const teacherCode = latestTeacher?.code;
-      const code = generateNextCode(CodePrefix.STUDENT, teacherCode);
+      const studentCode = latestStudent?.code;
+      const code = generateNextCode(CodePrefix.STUDENT, studentCode);
       const newUser = new this.model({
         ...dto,
         code,

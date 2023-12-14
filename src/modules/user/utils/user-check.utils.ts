@@ -37,9 +37,10 @@ export class UserCheckUtils extends BaseService {
     select: ProjectionType<User> = { _id: 1, email: 1, phone: 1 },
   ) {
     try {
-      const filter = {} as FilterQuery<User>;
-      if (params.email) filter.email = params.email;
-      if (params.phone) filter.phone = params.phone;
+      const filter = { $or: [] } as FilterQuery<User>;
+      if (params.email) filter.$or.push({ email: params.email });
+      if (params.phone) filter.$or.push({ phone: params.phone });
+      if (!filter.$or.length) delete filter.$or;
       const userExisted = await this.userRepo
         .findOne(filter, select)
         .lean()

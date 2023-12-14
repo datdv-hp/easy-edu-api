@@ -72,7 +72,7 @@ export class ClassroomCheckUtils extends BaseService {
         .exec();
       const classroomIds = existedClassrooms.map((item) => item._id.toString());
       const notExistedClassroomIds = difference(ids, classroomIds);
-      if (notExistedClassroomIds) {
+      if (notExistedClassroomIds.length) {
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
           this.i18n.translate('classroom.notFound'),

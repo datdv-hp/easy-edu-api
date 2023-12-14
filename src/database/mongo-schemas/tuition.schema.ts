@@ -11,7 +11,10 @@ import { User } from './user.schema';
 
 export type TuitionDocument = HydratedDocument<Tuition>;
 
-export class TuitionPromotionInfo extends MongoBaseSchema {
+export class TuitionPromotionInfo {
+  @Prop({ type: SchemaTypes.ObjectId, required: true })
+  _id: Types.ObjectId;
+
   @Prop({ type: String, required: true })
   name: string;
 
