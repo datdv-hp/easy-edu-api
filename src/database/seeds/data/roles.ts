@@ -5,6 +5,11 @@ export const features = {
     update: true,
     changePassword: true,
   },
+  registration: {
+    view: true,
+    createStudent: true,
+    delete: true,
+  },
   role: {
     view: true,
     create: true,
@@ -83,7 +88,7 @@ export const features = {
     update: true,
     delete: true,
     updateDocument: true,
-    downloadVideo: true,
+    // downloadVideo: true,
   },
   timekeeping: {
     view: true,
@@ -104,21 +109,26 @@ export const features = {
     update: true,
     delete: true,
   },
-  evaluationClassifiedSetting: {
-    view: true,
-    create: true,
-    update: true,
-    delete: true,
-  },
-  evaluationCriteriaSetting: {
-    view: true,
-    create: true,
-    update: true,
-    delete: true,
-  },
   settingTimekeeping: {
     view: true,
     update: true,
+  },
+  promotionSetting: {
+    view: true,
+    create: true,
+    update: true,
+    delete: true,
+  },
+  paymentMethodSetting: {
+    view: true,
+    create: true,
+    update: true,
+    delete: true,
+  },
+  tuition: {
+    update: true,
+    view: true,
+    viewPersonal: true,
   },
 };
 
@@ -170,7 +180,7 @@ export const managerRole = {
     update: true,
     delete: true,
     updateDocument: true,
-    downloadVideo: true,
+    // downloadVideo: true,
   },
   schedule: {
     view: true,
@@ -190,6 +200,10 @@ export const managerRole = {
     update: true,
     delete: true,
     download: true,
+  },
+  tuition: {
+    view: true,
+    update: true,
   },
 };
 
@@ -260,6 +274,9 @@ export const studentRole = {
     viewPersonal: true,
   },
   syllabus: {
+    viewPersonal: true,
+  },
+  tuition: {
     viewPersonal: true,
   },
 };

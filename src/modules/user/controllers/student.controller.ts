@@ -6,7 +6,7 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from '@/common/helpers/response.helper';
-import { IUserCredential } from '@/common/interfaces';
+import { IContext, IUserCredential } from '@/common/interfaces';
 import { JoiValidationPipe } from '@/common/pipes/joi.validation.pipe';
 import { ModifyFilterQueryPipe } from '@/common/pipes/modifyListQuery.pipe';
 import { RemoveEmptyQueryPipe } from '@/common/pipes/removeEmptyQuery.pipe';
@@ -66,6 +66,7 @@ export class StudentController {
   async createStudent(
     @Body(new TrimBodyPipe(), new JoiValidationPipe(createStudentSchema))
     body: IStudentCreateFormData,
+    @EasyContext() ctx: IContext,
   ) {
     try {
       const checkUserExisted =
@@ -107,6 +108,19 @@ export class StudentController {
           ],
         );
       }
+      const presenterIds = uniq(
+        body.studentDetail.courses
+          .map((course) => course?.presenterId)
+          .filter((item) => item),
+      );
+      if (presenterIds.length > 0) {
+        const checkPresentersExist = await this.userCheckUtils.usersExistByIds(
+          { ids: presenterIds },
+          { _id: 1 },
+          'presenterIds',
+        );
+        if (!checkPresentersExist.valid) return checkPresentersExist.error;
+      }
       const subjectIdsSet = new Set<string>();
       body.studentDetail?.courses?.forEach((course) => {
         course.subjectIds?.forEach((subjectId) => subjectIdsSet.add(subjectId));
@@ -136,7 +150,7 @@ export class StudentController {
       );
       if (!checkRoleExisted.valid) return checkRoleExisted.error;
 
-      const user = await this.service.createStudent(body);
+      const user = await this.service.createStudent(body, ctx.user.id);
       return new SuccessResponse(user);
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -276,11 +290,10 @@ export class StudentController {
       let removeCourseIds = [];
       const updateCourseIds = [];
       const newCourseObject = {};
-      const checkCourseData = {};
       // check if student has any class with remove subjectIds
       if (body?.studentDetail?.courses) {
         const currentUserCourse = await this.userCourseRepository.model
-          .find({ user: id }, ['subjects', 'course'])
+          .find({ userId: id }, { courseId: 1, subjectIds: 1 })
           .lean()
           .exec();
         const oldCourseIds = currentUserCourse.map((item) =>
@@ -321,29 +334,17 @@ export class StudentController {
         const oldCourseObject = {};
         forEach(currentUserCourse, (item) => {
           const id = item.courseId.toString();
-          oldCourseObject[id] =
-            item?.subjectIds?.map((subject) => subject.toString()) || [];
+          oldCourseObject[id] = {
+            subjectIds: item?.subjectIds.map((id) => id.toString()) || [],
+            presenterId: item?.presenterId,
+          };
         });
         forEach(body.studentDetail.courses, (item) => {
-          const id = item.courseId.toString();
-          newCourseObject[id] = item?.subjectIds || [];
-        });
-        forEach(removeCourseIds, (item) => {
-          if (oldCourseObject[item]) {
-            checkCourseData[item] = [...oldCourseObject[item]];
-          }
-        });
-        forEach(updateCourseIds, (item) => {
-          if (oldCourseObject[item]) {
-            const updateSubjects = difference(
-              oldCourseObject[item],
-              newCourseObject[item],
-            );
-
-            if (updateSubjects?.length) {
-              checkCourseData[item] = updateSubjects;
-            }
-          }
+          const id = item.courseId;
+          newCourseObject[id] = {
+            subjectIds: item?.subjectIds || [],
+            presenterId: item?.presenterId,
+          };
         });
       }
 
@@ -419,6 +420,10 @@ export class StudentController {
           ],
         );
       }
+      const checkStudentHasAnyPayment =
+        await this.userCheckUtils.StudentsNotExistAnyPayment([id]);
+      if (!checkStudentHasAnyPayment.valid)
+        return checkStudentHasAnyPayment.error;
 
       await this.service.deleteStudentByIds([id], userCtx.id);
       return new SuccessResponse(id);
@@ -479,6 +484,11 @@ export class StudentController {
           ],
         );
       }
+
+      const checkStudentHasAnyPayment =
+        await this.userCheckUtils.StudentsNotExistAnyPayment(studentIds);
+      if (!checkStudentHasAnyPayment.valid)
+        return checkStudentHasAnyPayment.error;
 
       await this.service.deleteStudentByIds(studentIds, userCtx.id);
       return new SuccessResponse([studentIds]);

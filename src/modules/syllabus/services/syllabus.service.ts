@@ -89,7 +89,7 @@ export class SyllabusService extends BaseService {
           .exec();
         const syllabusIdsSet = new Set<Types.ObjectId>();
         classrooms.forEach((classroom) => {
-          classroom.syllabusIds.forEach(syllabusIdsSet.add);
+          classroom.syllabusIds.forEach((item) => syllabusIdsSet.add(item));
         });
         filter.$and.push({ _id: { $in: Array.from(syllabusIdsSet) } });
       }
@@ -100,7 +100,7 @@ export class SyllabusService extends BaseService {
           .exec();
         const syllabusIdsSet = new Set<Types.ObjectId>();
         classrooms.forEach((classroom) => {
-          classroom.syllabusIds.forEach(syllabusIdsSet.add);
+          classroom.syllabusIds.forEach((item) => syllabusIdsSet.add(item));
         });
         filter.$and.push({ _id: { $in: Array.from(syllabusIdsSet) } });
       }

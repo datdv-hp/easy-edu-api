@@ -1,5 +1,3 @@
-import { SyllabusService } from './services/syllabus.service';
-import { SyllabusController } from './controllers/syllabus.controller';
 import {
   Lecture,
   LectureSchema,
@@ -10,18 +8,19 @@ import {
 } from '@/database/mongo-schemas';
 import {
   LectureRepository,
-  LessonRepository,
   SyllabusHistoryRepository,
   SyllabusRepository,
 } from '@/database/repositories';
 import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { LectureService } from './services/lecture.service';
-import { LessonModule } from '../lesson/lesson.module';
 import { ClassroomModule } from '../classroom/classroom.module';
-import { SyllabusCheckUtil } from './utils/syllabus-check.util';
+import { LessonModule } from '../lesson/lesson.module';
 import { LectureController } from './controllers/lecture.controller';
+import { SyllabusController } from './controllers/syllabus.controller';
+import { LectureService } from './services/lecture.service';
+import { SyllabusService } from './services/syllabus.service';
 import { LectureCheckUtil } from './utils/lecture-check.util';
+import { SyllabusCheckUtil } from './utils/syllabus-check.util';
 
 @Module({
   imports: [

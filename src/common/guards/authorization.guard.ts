@@ -1,3 +1,5 @@
+import { Role } from '@/database/mongo-schemas/role.schema';
+import { UserRepository } from '@/database/repositories';
 import {
   CanActivate,
   ExecutionContext,
@@ -9,9 +11,6 @@ import { Reflector } from '@nestjs/core';
 import { get } from 'lodash';
 import { PERMISSIONS_KEY } from '../constants';
 import { IUserCredential } from '../interfaces';
-import { UserRepository } from '@/database/repositories';
-import { createWinstonLogger } from '../services/winston.service';
-import { Role } from '@/database/mongo-schemas/role.schema';
 import { BaseService } from '../services/base.service';
 
 export const RolesGuard = (permissions: string[] | string) => {

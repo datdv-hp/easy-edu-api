@@ -1,4 +1,9 @@
-import { Gender, INPUT_TEXT_MAX_LENGTH, Regex } from '@/common/constants';
+import {
+  Gender,
+  INPUT_TEXT_MAX_LENGTH,
+  Regex,
+  UserType,
+} from '@/common/constants';
 import { ObjectIdSchema } from '@/common/validations';
 import dayjs from '@/plugins/dayjs';
 import Joi from '@/plugins/joi';
@@ -36,6 +41,17 @@ export const updateProfileBodySchema = Joi.object().keys({
   avatar: avatarSchema,
   dob: dobSchema,
   gender: genderSchema,
+  type: Joi.string()
+    .valid(...Object.values(UserType))
+    .required(),
+  teacherDetail: Joi.object({
+    degree: Joi.string().allow('', null).optional(),
+    workUnit: Joi.string()
+      .max(INPUT_TEXT_MAX_LENGTH)
+      .allow('', null)
+      .optional(),
+    note: Joi.string().allow('', null).optional(),
+  }).optional(),
 });
 
 export const userCreateBaseSchema = {

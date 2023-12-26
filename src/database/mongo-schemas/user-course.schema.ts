@@ -25,6 +25,9 @@ export class UserCourse extends MongoBaseSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: Subject.name }] })
   subjectIds?: Types.ObjectId[];
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: User.name })
+  presenterId: Types.ObjectId;
 }
 
 export const UserCourseSchema = SchemaFactory.createForClass(UserCourse);
@@ -35,8 +38,8 @@ UserCourseSchema.plugin(MongooseDelete, {
 });
 UserCourseSchema.index(
   {
-    user: 1,
-    course: 1,
+    userId: 1,
+    courseId: 1,
   },
   { unique: true },
 );

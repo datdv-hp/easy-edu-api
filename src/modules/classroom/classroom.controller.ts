@@ -29,8 +29,6 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { difference } from 'lodash';
-import { Types } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
 import {
   IClassFilter,
@@ -65,7 +63,10 @@ export class ClassroomController {
     @EasyContext() context?: IContext,
   ) {
     try {
-      const checkCourse = await this.checkUtils.CourseExistById(body?.courseId);
+      const checkCourse = await this.checkUtils.CourseExistById(
+        body?.courseId,
+        { tuition: 1 },
+      );
       if (!checkCourse.valid) return checkCourse.error;
 
       if (body?.participantIds?.length) {
@@ -90,11 +91,14 @@ export class ClassroomController {
       }
 
       const userId = sto(context.user.id);
-      const newClassroom = await this.service.create({
-        ...body,
-        createdBy: userId,
-        updatedBy: userId,
-      });
+      const newClassroom = await this.service.create(
+        {
+          ...body,
+          createdBy: userId,
+          updatedBy: userId,
+        },
+        { tuition: checkCourse.data.tuition },
+      );
 
       return new SuccessResponse(newClassroom);
     } catch (error) {
@@ -139,6 +143,8 @@ export class ClassroomController {
         participantIds: 1,
         color: 1,
         code: 1,
+        paymentStartDate: 1,
+        paymentEndDate: 1,
       });
       if (!checkClassroom.valid) return checkClassroom.error;
       return new SuccessResponse(checkClassroom.data);
@@ -185,7 +191,16 @@ export class ClassroomController {
     @EasyContext('user') userCtx?: IUserCredential,
   ) {
     try {
-      const checkClassroom = await this.checkUtils.ClassroomExistById(id);
+      const checkClassroom = await this.checkUtils.ClassroomExistById(id, {
+        _id: 1,
+        startDate: 1,
+        endDate: 1,
+        syllabusIds: 1,
+        participantIds: 1,
+        courseId: 1,
+        paymentStartDate: 1,
+        paymentEndDate: 1,
+      });
       if (!checkClassroom.valid) return checkClassroom.error;
       const existedClassroom = checkClassroom.data;
 
@@ -257,7 +272,13 @@ export class ClassroomController {
       const classroom = await this.service.update(
         id,
         { ...body, updatedBy: sto(userCtx.id) },
-        existedClassroom.syllabusIds as Types.ObjectId[],
+        {
+          syllabusIds: existedClassroom.syllabusIds,
+          participantIds: existedClassroom.participantIds,
+          courseId: existedClassroom.courseId,
+          paymentStartDate: existedClassroom.paymentStartDate,
+          paymentEndDate: existedClassroom.paymentEndDate,
+        },
       );
       return new SuccessResponse(classroom);
     } catch (error) {
@@ -278,8 +299,14 @@ export class ClassroomController {
         id,
       ]);
       if (!checkLessons.valid) return checkLessons.error;
-      const classroom = await this.service.deleteManyIds([id], sto(userCtx.id));
 
+      const checkNotExistPaidTuition =
+        await this.checkUtils.NotExistAnyPaidTuitionByStudentIdsAndClassroomIds(
+          [id],
+        );
+      if (!checkNotExistPaidTuition.valid)
+        return checkNotExistPaidTuition.error;
+      const classroom = await this.service.deleteManyIds([id], sto(userCtx.id));
       return new SuccessResponse(classroom);
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -294,35 +321,21 @@ export class ClassroomController {
     @EasyContext('user') userCtx: IUserCredential,
   ) {
     try {
-      if (ids?.length) {
-        const existedClassrooms = await this.repo
-          .allExistedByIds(ids)
-          .lean()
-          .exec();
-        const classroomIds = existedClassrooms.map((item) =>
-          item._id.toString(),
-        );
-        const notExistedClassroomIds = difference(ids, classroomIds);
-        if (notExistedClassroomIds?.length) {
-          return new ErrorResponse(
-            HttpStatus.BAD_REQUEST,
-            this.i18n.translate('classroom.notFound'),
-            [
-              {
-                errorCode: HttpStatus.ITEM_NOT_FOUND,
-                key: 'classroom',
-                message: this.i18n.translate('classroom.notFound'),
-                data: notExistedClassroomIds,
-              },
-            ],
-          );
-        }
-      }
-
+      const checkClassroomsExist = await this.checkUtils.ClassroomsExistByIds(
+        ids,
+      );
+      if (!checkClassroomsExist.valid) return checkClassroomsExist.error;
       const checkLessons = await this.checkUtils.notExistedLessonOfClassrooms(
         ids,
       );
       if (!checkLessons.valid) return checkLessons.error;
+
+      const checkNotExistPaidTuition =
+        await this.checkUtils.NotExistAnyPaidTuitionByStudentIdsAndClassroomIds(
+          ids,
+        );
+      if (!checkNotExistPaidTuition.valid)
+        return checkNotExistPaidTuition.error;
 
       const status = await this.service.deleteManyIds(ids, sto(userCtx.id));
       return new SuccessResponse({ success: status });

@@ -1,5 +1,5 @@
 import { MongoCollection, OrderDirection } from '@/common/constants';
-import { stos } from '@/common/helpers/common.functions.helper';
+import { sto, stos } from '@/common/helpers/common.functions.helper';
 import { IContext } from '@/common/interfaces';
 import { BaseService } from '@/common/services/base.service';
 import { User } from '@/database/mongo-schemas';
@@ -116,7 +116,7 @@ export class TimekeepingService extends BaseService {
         teacher.countCheckIn = filter(timekeepingInfos, (timekeeping) => {
           return (
             timekeeping.isAttended &&
-            timekeeping.userId === teacher._id.toString()
+            timekeeping.userId.toString() === teacher._id.toString()
           );
         }).length;
         delete teacher.lessons;
@@ -248,6 +248,27 @@ export class TimekeepingService extends BaseService {
       return result;
     } catch (error) {
       this.logger.error('Error in update: ', error);
+      throw error;
+    }
+  }
+
+  async create(params: ITimekeepingCreateFormData, context?: IContext) {
+    try {
+      const createdTimeKeeping = await this.repo.create({
+        userId: sto(params.userId),
+        lessonId: sto(params.lessonId),
+        isAttended: params.isAttended,
+        createdBy: sto(context.user.id),
+      });
+
+      return {
+        _id: createdTimeKeeping._id,
+        userId: createdTimeKeeping.userId,
+        lessonId: createdTimeKeeping.lessonId,
+        isAttended: createdTimeKeeping.isAttended,
+      };
+    } catch (error) {
+      this.logger.error('Error in create: ', error);
       throw error;
     }
   }

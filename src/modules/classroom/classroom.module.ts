@@ -12,6 +12,7 @@ import { ClassroomController } from './classroom.controller';
 import { ClassroomService } from './classroom.service';
 import { ClassroomCheckUtils } from './utils/classroom-check.utils';
 import { TimekeepingModule } from '../timekeeping/timekeeping.module';
+import { TuitionModule } from '../tuition/tuition.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TimekeepingModule } from '../timekeeping/timekeeping.module';
     forwardRef(() => LessonModule),
     forwardRef(() => TimekeepingModule),
     UserCourseModule,
+    forwardRef(() => TuitionModule),
   ],
   controllers: [ClassroomController],
   providers: [ClassroomService, ClassroomRepository, ClassroomCheckUtils],

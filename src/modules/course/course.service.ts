@@ -20,7 +20,7 @@ import {
 import dayjs from '@/plugins/dayjs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { differenceBy, get, uniq } from 'lodash';
+import { differenceBy, get, uniq, uniqBy } from 'lodash';
 import { FilterQuery, PipelineStage, Types } from 'mongoose';
 import {
   ICourseCreateFormData,
@@ -98,6 +98,7 @@ export class CourseService extends BaseService {
             description: 1,
             times: 1,
             subjects: 1,
+            tuition: 1,
           },
         },
       ];
@@ -174,16 +175,16 @@ export class CourseService extends BaseService {
 
       if (roleType === RoleType.TEACHER) {
         const lessons: Lesson[] = await this.lessonRepo
-          .find({ teacherId: userId }, ['courseId'])
+          .find({ teacherId: userId }, { courseId: 1 })
           .lean()
-          .distinct('courseId');
+          .exec();
         const courseIds = lessons.map((item) => item.courseId);
         filter.$and.push({ _id: { $in: courseIds } });
       }
 
       if (roleType === RoleType.STUDENT) {
         const userCourses = await this.userCourseRepo
-          .find({ userId }, ['courseId'])
+          .find({ userId }, { courseId: 1 })
           .lean()
           .exec();
         const courseIds = userCourses.map((item) => item.courseId);
@@ -215,6 +216,7 @@ export class CourseService extends BaseService {
             description: 1,
             times: 1,
             createdAt: 1,
+            tuition: 1,
           },
         },
         {
@@ -330,14 +332,18 @@ export class CourseService extends BaseService {
   async findTeacherByCourseId(courseId: string) {
     try {
       const lessons: Lesson[] = await this.lessonRepo
-        .find({ courseId }, ['teacherId'])
-        .distinct('teacher')
+        .find({ courseId }, { teacherId: 1 })
         .lean()
         .exec();
-      const teacherIds = lessons.map((item) => item.teacherId);
-      const SELECT = ['code', 'name', 'email', 'phone', 'teacherDetail.degree'];
+      const teacherIds = uniq(lessons.map((item) => item.teacherId.toString()));
       const teachers = await this.userRepo
-        .findByIds(teacherIds, SELECT)
+        .findByIds(teacherIds, {
+          code: 1,
+          name: 1,
+          email: 1,
+          phone: 1,
+          'teacherDetail.degree': 1,
+        })
         .lean()
         .exec();
       return teachers;

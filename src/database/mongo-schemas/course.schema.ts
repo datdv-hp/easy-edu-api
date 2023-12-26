@@ -36,6 +36,9 @@ export class Course extends MongoBaseSchema {
 
   @Prop({ type: Number, required: true, default: 0 })
   times: number;
+
+  @Prop({ type: Number, required: true, min: 0 })
+  tuition: number;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

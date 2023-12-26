@@ -3,7 +3,6 @@ import { ErrorResponse } from '@/common/helpers/response.helper';
 import { Role } from '@/database/mongo-schemas';
 import { RoleRepository, UserRepository } from '@/database/repositories';
 import { Injectable } from '@nestjs/common';
-import { get } from 'lodash';
 import { ProjectionType } from 'mongoose';
 import { I18nService } from 'nestjs-i18n';
 

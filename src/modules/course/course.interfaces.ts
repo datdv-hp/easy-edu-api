@@ -7,6 +7,7 @@ export type ICourseCreateFormData = {
   subjectIds?: string[];
   courseFormIds?: string[];
   times: number;
+  tuition: number;
 };
 
 export type ICourseUpdateFormData = Partial<ICourseCreateFormData>;

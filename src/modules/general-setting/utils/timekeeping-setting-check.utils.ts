@@ -34,12 +34,12 @@ export class TimekeepingSettingCheckUtils extends BaseService {
       if (!settingExist) {
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
-          this.i18n.translate('settings.notFound'),
+          this.i18n.translate('setting.notFound'),
           [
             {
               key: 'id',
               errorCode: HttpStatus.ITEM_NOT_FOUND,
-              message: this.i18n.translate('settings.notFound'),
+              message: this.i18n.translate('setting.notFound'),
             },
           ],
         );

@@ -13,6 +13,7 @@ export const CodePrefix = {
   COURSE: 'CS',
   CLASSROOM: 'CL',
   LESSON: 'LS',
+  TUITION: 'HP',
 };
 
 export enum UserVerifyType {
@@ -70,4 +71,15 @@ export enum SettingType {
 export enum TimeKeepingType {
   CUTOFF_DATE = 'CUTOFF_DATE',
   END_OF_MONTH = 'END_OF_MONTH',
+}
+
+export enum RegistrationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum PromotionType {
+  FIXED_AMOUNT = 'FIXED_AMOUNT',
+  PERCENTAGE = 'PERCENTAGE',
 }

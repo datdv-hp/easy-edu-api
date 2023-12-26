@@ -1,0 +1,9 @@
+{
+  "teacherNotTeachingLesson": "Giảng viên không có buổi dạy",
+  "notFound": "Không tìm thấy thông tin chấm công",
+  "exist": "Đã có thông tin chấm công",
+  "somethingWrong": "Lỗi chấm công",
+  "lessonCompleted": "Buổi học đã kết thúc",
+  "lessonUpcoming": "Buổi học chưa diễn ra",
+  "userNotInLesson": "Người dùng không tham gia buổi học"
+}

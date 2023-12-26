@@ -18,6 +18,7 @@ import {
   InternalServerErrorException,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import {
@@ -104,7 +105,15 @@ export class TimekeepingController {
           break;
         }
       }
-
+      if (isLessonUpcoming) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
+          {
+            key: 'lessonUpcoming',
+            errorCode: HttpStatus.ITEM_INVALID,
+            message: i18n.translate('timekeeping.lessonUpcoming'),
+          },
+        ]);
+      }
       // check if all lessons completed
       let isLessonCompleted = false;
       for (let index = 0; index < lessons.length; index++) {
@@ -117,21 +126,12 @@ export class TimekeepingController {
         }
       }
 
-      if (isLessonUpcoming) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
-          {
-            key: 'lessonUpcoming',
-            errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.lessonUpcoming'),
-          },
-        ]);
-      }
       if (isLessonCompleted) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
           {
             key: 'timekeepingTime',
             errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.timeInvalid'),
+            message: i18n.translate('timekeeping.lessonCompleted'),
           },
         ]);
       }
@@ -232,7 +232,7 @@ export class TimekeepingController {
           {
             key: 'timekeepingTime',
             errorCode: HttpStatus.ITEM_INVALID,
-            message: i18n.translate('timekeeping.timeInvalid'),
+            message: i18n.translate('timekeeping.lessonCompleted'),
           },
         ]);
       }
@@ -275,6 +275,45 @@ export class TimekeepingController {
       );
       if (!checkTimekeepingExist.valid) return checkTimekeepingExist.error;
       const result = await this.service.update(id, body);
+      return new SuccessResponse(result);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @RolesGuard(['timekeeping.create'])
+  @Post()
+  async create(
+    @I18n() i18n: I18nContext,
+    @Body(new TrimBodyPipe(), new JoiValidationPipe(createTimekeepingSchema))
+    body: ITimekeepingCreateFormData,
+    @EasyContext() context?: IContext,
+  ) {
+    try {
+      const [checkExistTeacher, checkExistLesson, checkTimekeepingNotExist] =
+        await Promise.all([
+          this.checkUtil.UsersExistByIds([body.userId]),
+          this.checkUtil.LessonsExistByIds([body.lessonId], { teacherId: 1 }),
+          this.checkUtil.TimekeepingNotExistByUserIdAndLessonId({
+            userId: body.userId,
+            lessonId: body.lessonId,
+          }),
+        ]);
+      if (!checkExistTeacher.valid) return checkExistTeacher.error;
+      if (!checkExistLesson.valid) return checkExistLesson.error;
+      if (checkExistLesson.data[0].teacherId.toString() !== body.userId) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, i18n.t('errors.400'), [
+          {
+            key: 'user',
+            errorCode: HttpStatus.ITEM_NOT_FOUND,
+            message: i18n.translate('timekeeping.teacherNotTeachingLesson'),
+          },
+        ]);
+      }
+      if (!checkTimekeepingNotExist.valid)
+        return checkTimekeepingNotExist.error;
+
+      const result = await this.service.create(body, context);
       return new SuccessResponse(result);
     } catch (error) {
       throw new InternalServerErrorException(error);

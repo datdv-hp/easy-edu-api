@@ -332,7 +332,7 @@ export class LessonController {
     @Param('id', new JoiValidationPipe(ObjectIdSchema)) id: string,
   ) {
     try {
-      const lesson = await this.service.findLessonDetail(id);
+      const lesson = await this.service.FindLessonMoreDetail(id);
       if (!lesson) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,
@@ -356,7 +356,7 @@ export class LessonController {
     @Param('id', new JoiValidationPipe(ObjectIdSchema)) id: string,
   ) {
     try {
-      const lesson = await this.service.findLessonDetailForSchedule(id);
+      const lesson = await this.service.FindLessonMoreDetail(id);
       if (!lesson) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,
@@ -382,7 +382,13 @@ export class LessonController {
     @EasyContext() context?: IContext,
   ) {
     try {
-      const checkExistedLesson = await this.checkUtils.existedLessonById(id);
+      const checkExistedLesson = await this.checkUtils.existedLessonById(id, {
+        date: 1,
+        startTime: 1,
+        endTime: 1,
+        classroomId: 1,
+        studentIds: 1,
+      });
       if (!checkExistedLesson.valid) return checkExistedLesson.error;
       const existedLesson = checkExistedLesson.data;
       const bodyKeys = Object.keys(body);
@@ -630,7 +636,7 @@ export class LessonController {
           ),
         });
       }
-      if (isUpcomingInLimitTime) {
+      if (isUpComing && isUpcomingInLimitTime) {
         errors.push({
           key: 'lessonUpcoming',
           errorCode: HttpStatus.ITEM_INVALID,
@@ -780,12 +786,12 @@ export class LessonController {
       if (body.status == AbsentRequestStatus.PROCESSING) {
         return new ErrorResponse(
           HttpStatus.BAD_REQUEST,
-          this.i18n.translate('requestLeave.processed'),
+          this.i18n.translate('lesson.absentRequest.processed'),
           [
             {
               key: 'status',
               errorCode: HttpStatus.ITEM_INVALID,
-              message: this.i18n.translate('requestLeave.processed'),
+              message: this.i18n.translate('lesson.absentRequest.processed'),
             },
           ],
         );

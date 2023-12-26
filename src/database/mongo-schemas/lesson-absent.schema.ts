@@ -1,11 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, SchemaTypes, Types } from 'mongoose';
-import { User } from './user.schema';
-import { Lesson } from './lesson.schema';
-import MongooseDelete from 'mongoose-delete';
-import { MongoBaseSchema } from './base.schema';
 import { MongoCollection } from '@/common/constants';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
+import MongooseDelete from 'mongoose-delete';
 import { AbsentRequestStatus } from '../constants';
+import { MongoBaseSchema } from './base.schema';
+import { Lesson } from './lesson.schema';
+import { User } from './user.schema';
 
 export type LessonAbsentDocument = HydratedDocument<LessonAbsent>;
 

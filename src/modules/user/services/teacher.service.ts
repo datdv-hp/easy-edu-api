@@ -140,7 +140,7 @@ export class TeacherService extends BaseService {
       ];
       const [result] = await this.model.aggregate(query).exec();
       const items = result.data || [];
-      const totalItems = result.total[0].count || 0;
+      const totalItems = result.total[0]?.count || 0;
       return { items, totalItems };
     } catch (error) {
       this.logger.error('Error in findAllWithPaging service', error);

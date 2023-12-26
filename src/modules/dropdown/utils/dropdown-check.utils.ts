@@ -1,11 +1,6 @@
 import { HttpStatus } from '@/common/constants';
 import { ErrorResponse } from '@/common/helpers/response.helper';
-import {
-  Classroom,
-  ClassroomDocument,
-  CourseDocument,
-  Syllabus,
-} from '@/database/mongo-schemas';
+import { Classroom, CourseDocument, Syllabus } from '@/database/mongo-schemas';
 import {
   ClassroomRepository,
   CourseRepository,

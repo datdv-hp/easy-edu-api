@@ -23,14 +23,18 @@ import { ExternalSystemsModule } from './modules/external-systems/external-syste
 import { GeneralSettingModule } from './modules/general-setting/general-setting.module';
 import { LessonModule } from './modules/lesson/lesson.module';
 import { MailModule } from './modules/mail/mail.module';
+import { PromotionSettingModule } from './modules/promotion-setting/promotion-setting.module';
+import { RegistrationModule } from './modules/registration/registration.module';
 import { RoleModule } from './modules/role/role.module';
 import { SubjectModule } from './modules/subject/subject.module';
 import { SyllabusModule } from './modules/syllabus/syllabus.module';
 import { TimekeepingModule } from './modules/timekeeping/timekeeping.module';
+import { TuitionModule } from './modules/tuition/tuition.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { UserCourseModule } from './modules/user-course/user-course.module';
 import { UserVerifyModule } from './modules/user-verify/user-verify.module';
 import { UserModule } from './modules/user/user.module';
+import { PaymentMethodSettingModule } from './modules/payment-method-setting/payment-method-setting.module';
 @Module({
   imports: [
     EvaluationCriteriaModule,
@@ -60,6 +64,10 @@ import { UserModule } from './modules/user/user.module';
     ExternalSystemsModule,
     UploadModule,
     TimekeepingModule,
+    RegistrationModule,
+    PromotionSettingModule,
+    TuitionModule,
+    PaymentMethodSettingModule,
   ],
   controllers: [AppController],
   providers: [

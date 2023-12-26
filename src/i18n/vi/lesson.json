@@ -1,0 +1,22 @@
+{
+    "cannotCreateLesson": "Không thể tạo buổi học",
+    "notFound": "Không tìm thấy buổi học",
+    "teacherBusyInThisTime": "Giảng viên đã có lịch dạy vào khoảng thời gian này",
+    "existLessonInThisTime": "Đã có buổi học vào khoảng thời gian này",
+    "studentExistLessonInThisTime": "Học sinh đã có lịch học vào khoảng thời gian này",
+    "invalidLesson": "Xóa buổi học không thành công",
+    "absentRequest": {
+      "existed": "Đơn xin nghỉ học đã tồn tại",
+      "notFound": "Không tìm thấy đơn xin nghỉ học"
+    },
+    "invalidParameter": "Thông tin buổi học không hợp lệ",
+    "cannotCreateLessonInPast": "Không thể tạo buổi học trong quá khứ",
+    "cannotDeleteLessonInThePast": "Buổi học đã kết thúc",
+    "cannotDeleteLessonInTheHappening": "Buổi học đang diễn ra",
+    "cannotDeleteLessonInTheUpcoming": "Buổi học có thời gian sắp diễn ra nhỏ hơn 8 tiếng",
+    "invalidStudents": "Học sinh không tồn tại",
+    "cannotUpdateLessonNotFeature": "Chỉ chỉnh sửa được tài liệu và file ghi hình buổi học",
+    "updateLessonTakePlaceInThePast": "Thời gian diễn ra buổi học là quá khứ",
+    "notHavePermission": "Không có quyền chỉnh sửa buổi học"
+  }
+  

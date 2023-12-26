@@ -1,5 +1,8 @@
 import { IFilterBase } from '@/common/interfaces';
-
+interface PaymentDate {
+  startDate: Date;
+  endDate: Date;
+}
 export type IClassroomCreateFormData = {
   name: string;
   courseId: string;
@@ -9,6 +12,7 @@ export type IClassroomCreateFormData = {
   color?: string;
   teachers?: string[];
   syllabusIds?: string[];
+  paymentDate: PaymentDate;
 };
 
 export type IClassroomUpdateFormData = Partial<IClassroomCreateFormData>;

@@ -22,12 +22,14 @@ const studentDetailSchema = Joi.object({
   courses: Joi.array().items({
     courseId: ObjectIdSchema,
     subjectIds: Joi.array().items(ObjectIdSchema).unique().allow(null),
+    presenterId: ObjectIdSchema.allow(null).optional(),
   }),
 });
 
 export const createStudentSchema = Joi.object().keys({
   ...userCreateBaseSchema,
   studentDetail: studentDetailSchema.required(),
+  registrationId: ObjectIdSchema.optional(),
 });
 
 export const updateStudentSchema = Joi.object().keys({

@@ -1,5 +1,5 @@
-import { ClientSession, CreateOptions } from 'mongoose';
 import {
+  CreateOptions,
   Document,
   FilterQuery,
   ProjectionType,
@@ -66,7 +66,7 @@ export class BaseRepository<T extends Omit<Document, 'delete'>> {
     return this.model.exists({ _id: id });
   }
 
-  create(entity: Partial<T>, options?: SaveOptions) {
+  create(entity: Partial<T | any>, options?: SaveOptions) {
     const newEntity = new this.model(entity);
     return newEntity.save(options);
   }
@@ -81,6 +81,14 @@ export class BaseRepository<T extends Omit<Document, 'delete'>> {
     options: QueryOptions | null = null,
   ) {
     return this.model.updateMany(filter, update, options);
+  }
+
+  updateOne(
+    filter: FilterQuery<T>,
+    update: UpdateQuery<T> | UpdateWithAggregationPipeline,
+    options: QueryOptions | null = null,
+  ) {
+    return this.model.updateOne(filter, update, options);
   }
 
   delete(filter: FilterQuery<T>, deletedBy: string | Types.ObjectId) {

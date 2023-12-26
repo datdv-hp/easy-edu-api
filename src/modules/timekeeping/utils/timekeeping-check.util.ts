@@ -11,7 +11,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { difference } from 'lodash';
 import { ProjectionType } from 'mongoose';
-import dayjs from '@/plugins/dayjs';
 
 @Injectable()
 export class TimekeepingCheckUtil extends BaseService {
@@ -47,6 +46,39 @@ export class TimekeepingCheckUtil extends BaseService {
       return { valid: true, data: timekeepingExist };
     } catch (error) {
       this.logger.error('Error in TimekeepingExistById checkUtil', error);
+      throw error;
+    }
+  }
+
+  async TimekeepingNotExistByUserIdAndLessonId(params: {
+    userId: string;
+    lessonId: string;
+  }) {
+    try {
+      const timekeeping = await this.timekeepingRepo.findOne(
+        { userId: params.userId, lessonId: params.lessonId },
+        { _id: 1 },
+      );
+      if (timekeeping) {
+        const error = new ErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          this.i18n.translate('timekeeping.somethingWrong'),
+          [
+            {
+              key: 'timekeeping',
+              errorCode: HttpStatus.ITEM_NOT_FOUND,
+              message: this.i18n.translate('timekeeping.exist'),
+            },
+          ],
+        );
+        return { valid: false, error };
+      }
+      return { valid: true };
+    } catch (error) {
+      this.logger.error(
+        'Error in TimekeepingNotExistByUserIdAndLessonId checkUtil',
+        error,
+      );
       throw error;
     }
   }
@@ -99,7 +131,7 @@ export class TimekeepingCheckUtil extends BaseService {
         lesson._id.toString(),
       );
       const lessonsNotExisted = difference(ids, lessonsExistIds);
-      if (lessonsExist.length !== ids.length) {
+      if (lessonsNotExisted.length) {
         const error = new ErrorResponse(
           HttpStatus.BAD_REQUEST,
           this.i18n.t('errors.400'),

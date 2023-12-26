@@ -1,11 +1,9 @@
-import { MongoCollection } from '@/common/constants';
 import { sto } from '@/common/helpers/common.functions.helper';
 import { BaseService } from '@/common/services/base.service';
-import { AbsentRequestStatus, DELETE_COND } from '@/database/constants';
+import { AbsentRequestStatus } from '@/database/constants';
 import { LessonAbsentRepository } from '@/database/repositories';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PipelineStage } from 'mongoose';
 import { MailService } from '../mail/mail.service';
 import {
   IHandleLessonAbsentForm,
@@ -41,53 +39,43 @@ export class LessonAbsentService extends BaseService {
     id: string,
     body: IHandleLessonAbsentForm & { updatedBy: string },
   ) {
+    const session = await this.repo.model.startSession();
     try {
-      const query: PipelineStage[] = [
-        { $match: { _id: sto(id) } },
-        { $limit: 1 },
-        { $set: { status: body.status } },
-        {
-          $lookup: {
-            from: MongoCollection.USERS,
-            localField: 'userId',
-            foreignField: '_id',
-            as: 'user',
-            pipeline: [
-              { $match: DELETE_COND },
-              { $limit: 1 },
-              { $project: { email: 1 } },
-            ],
-          },
-        },
-        {
-          $lookup: {
-            from: MongoCollection.LESSONS,
-            localField: 'lessonId',
-            foreignField: '_id',
-            as: 'lesson',
-            pipeline: [
-              { $match: DELETE_COND },
-              { $limit: 1 },
-              { $project: { name: 1, startTime: 1, endTime: 1, date: 1 } },
-            ],
-          },
-        },
-        { $unwind: '$user' },
-        { $unwind: '$lesson' },
-        { $project: { status: 1, reason: 1, user: 1, lesson: 1 } },
-      ];
-      const [request] = await this.repo.model.aggregate(query).exec();
-      await this.mailService.sendNotifyHandleAbsentRequest(request.user.email, {
-        lessonName: request.lesson.name,
-        date: request.lesson.date,
-        startTime: request.lesson.startTime,
-        endTime: request.lesson.endTime,
-        isApproved: request.status === AbsentRequestStatus.APPROVED,
+      session.startTransaction();
+      const result = await this.repo
+        .findByIdAndUpdate(
+          id,
+          { status: body.status },
+          { new: true, runValidators: true },
+        )
+        .populate('userId', { email: 1 })
+        .populate('lessonId', { name: 1, startTime: 1, endTime: 1, date: 1 })
+        .select({ status: 1, reason: 1, userId: 1, lessonId: 1 })
+        .lean();
+      const user = result.userId as unknown as { email: string };
+      const lesson = result.lessonId as unknown as {
+        name: string;
+        startTime: string;
+        endTime: string;
+        date: string;
+      };
+      await this.mailService.sendNotifyHandleAbsentRequest(user.email, {
+        lessonName: lesson.name,
+        date: lesson.date,
+        startTime: lesson.startTime,
+        endTime: lesson.endTime,
+        isApproved: result.status === AbsentRequestStatus.APPROVED,
       });
-      return request;
+      await session.commitTransaction();
+
+      return { _id: id, status: body.status };
     } catch (error) {
+      await session.abortTransaction();
+
       this.logger.error('Error in update service', error);
       throw error;
+    } finally {
+      await session.endSession();
     }
   }
 
